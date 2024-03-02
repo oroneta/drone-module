@@ -1,0 +1,5 @@
+--------- DOCKER -------------
+Be sure to have Docker installed on your machine.
+
+cd docker
+docker-compose up -d

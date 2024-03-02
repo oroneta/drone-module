@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+    drone-api:
+        build:
+            context: .
+            dockerfile: drone-api.Dockerfile
+        ports:
+            - "80001:80001"
+
+    drone-manager:
+        build:
+            context: .
+            dockerfile: drone-manager.Dockerfile
+        ports:
+            - "80002:80002"
+
+    drone-ai:
+        build:
+            context: .
+            dockerfile: drone-ai.Dockerfile
+        ports:
+            - "80003:80003"
+
+    drone-mongo:
+        image: mongo
+        restart: always
+        environment:
+            MONGO_INITDB_ROOT_USERNAME: root
+            MONGO_INITDB_ROOT_PASSWORD: example
+
+    drone-mongo-express:
+        image: mongo-express
+        restart: always
+        ports:
+            - 8081:8081
+        environment:
+            ME_CONFIG_MONGODB_ADMINUSERNAME: root
+            ME_CONFIG_MONGODB_ADMINPASSWORD: example
+            ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/
