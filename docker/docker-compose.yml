@@ -6,21 +6,21 @@ services:
             context: .
             dockerfile: drone-api.Dockerfile
         ports:
-            - "80001:80001"
+            - "60001:60001"
 
     drone-manager:
         build:
             context: .
             dockerfile: drone-manager.Dockerfile
         ports:
-            - "80002:80002"
+            - "60002:60002"
 
     drone-ai:
         build:
             context: .
             dockerfile: drone-ai.Dockerfile
         ports:
-            - "80003:80003"
+            - "60003:60003"
 
     drone-mongo:
         image: mongo
