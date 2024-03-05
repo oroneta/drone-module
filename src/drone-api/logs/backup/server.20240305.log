@@ -1,0 +1,149 @@
+05-03-2024 12:41:03 AM - info: Server on port: 60001
+05-03-2024 12:42:00 AM - info: ppp
+05-03-2024 12:42:13 AM - info: Server on port: 60001
+05-03-2024 12:42:19 AM - info: ppp
+05-03-2024 12:42:43 AM - info: Server on port: 60001
+05-03-2024 12:42:54 AM - info: Server on port: 60001
+05-03-2024 12:43:16 AM - info: Server on port: 60001
+05-03-2024 12:43:20 AM - info: Server on port: 60001
+05-03-2024 12:43:34 AM - info: Server on port: 60001
+05-03-2024 12:43:39 AM - info: Server on port: 60001
+05-03-2024 12:43:53 AM - info: Server on port: 60001
+05-03-2024 12:44:06 AM - info: ppp
+05-03-2024 12:44:24 AM - info: Server on port: 60001
+05-03-2024 12:45:27 AM - info: ppp
+05-03-2024 12:46:24 AM - info: Server on port: 60001
+05-03-2024 12:46:25 AM - info: Server on port: 60001
+05-03-2024 12:46:30 AM - info: ppp
+05-03-2024 12:46:40 AM - info: Server on port: 60001
+05-03-2024 12:46:58 AM - info: Server on port: 60001
+05-03-2024 12:47:03 AM - info: ppp
+05-03-2024 11:58:10 AM - info: Server on port: 60001
+05-03-2024 12:05:20 PM - info: Server on port: 60001
+05-03-2024 12:05:25 PM - info: Server on port: 60001
+05-03-2024 12:08:15 PM - info: Server on port: 60001
+05-03-2024 12:08:36 PM - info: Server on port: 60001
+05-03-2024 12:08:37 PM - info: Server on port: 60001
+05-03-2024 12:09:01 PM - info: Server on port: 60001
+05-03-2024 12:10:00 PM - info: Server on port: 60001
+05-03-2024 12:10:13 PM - info: aaa
+05-03-2024 12:10:13 PM - info: Server on port: 60001
+05-03-2024 12:10:19 PM - info: aaa
+05-03-2024 12:10:19 PM - info: Server on port: 60001
+05-03-2024 12:10:43 PM - info: aaa
+05-03-2024 12:10:43 PM - info: Server on port: 60001
+05-03-2024 12:10:46 PM - info: aaa
+05-03-2024 12:10:46 PM - info: Server on port: 60001
+05-03-2024 12:12:00 PM - info: aaa
+05-03-2024 12:12:00 PM - crit: Error connecting to true
+05-03-2024 12:12:00 PM - info: Server on port: 60001
+05-03-2024 12:12:17 PM - info: aaa
+05-03-2024 12:12:17 PM - info: Server on port: 60001
+05-03-2024 12:12:45 PM - info: aaa
+05-03-2024 12:12:45 PM - info: Server on port: 60001
+05-03-2024 12:12:48 PM - info: aaa
+05-03-2024 12:12:48 PM - info: Server on port: 60001
+05-03-2024 12:13:18 PM - crit: Error connecting to mongodb://127.0.0.1:27017//drone-module.db
+05-03-2024 12:13:19 PM - info: aaa
+05-03-2024 12:13:19 PM - info: Server on port: 60001
+05-03-2024 12:13:26 PM - info: aaa
+05-03-2024 12:13:26 PM - info: Server on port: 60001
+05-03-2024 12:13:33 PM - info: mongodb://127.0.0.1:27017//drone-module.db
+05-03-2024 12:13:33 PM - info: Server on port: 60001
+05-03-2024 12:14:03 PM - crit: Error connecting to mongodb://127.0.0.1:27017//drone-module.db
+05-03-2024 12:14:36 PM - info: mongodb://127.0.0.1:27017//drone-module.db
+05-03-2024 12:14:36 PM - info: Server on port: 60001
+05-03-2024 12:14:41 PM - info: mongodb://127.0.0.1:27017//drone-module.db
+05-03-2024 12:14:41 PM - info: Server on port: 60001
+05-03-2024 12:14:44 PM - info: mongodb://127.0.0.1:27017//drone-module.db
+05-03-2024 12:14:44 PM - info: Server on port: 60001
+05-03-2024 12:14:51 PM - info: mongodb://127.0.0.1:27017//drone-module.db
+05-03-2024 12:14:51 PM - info: Server on port: 60001
+05-03-2024 12:14:58 PM - info: mongodb://127.0.0.1:27017//drone-module.db
+05-03-2024 12:14:58 PM - info: Server on port: 60001
+05-03-2024 12:16:00 PM - info: mongodb://127.0.0.1:27017//drone-module.db
+05-03-2024 12:16:00 PM - info: Server on port: 60001
+05-03-2024 12:16:10 PM - info: mongodb://127.0.0.1:27017//drone-module.db
+05-03-2024 12:16:10 PM - info: Server on port: 60001
+05-03-2024 12:16:40 PM - crit: Error connecting to mongodb://127.0.0.1:27017//drone-module.db
+05-03-2024 12:19:14 PM - info: mongodb://127.0.0.1:27017//drone-module.db
+05-03-2024 12:19:14 PM - info: Server on port: 60001
+05-03-2024 12:19:24 PM - info: mongodb://127.0.0.1:27017//drone-module.db
+05-03-2024 12:19:24 PM - info: Server on port: 60001
+05-03-2024 12:19:54 PM - crit: Error connecting to mongodb://127.0.0.1:27017//drone-module.db
+05-03-2024 12:20:04 PM - info: mongodb://127.0.0.1:27017//drone-module.db
+05-03-2024 12:20:04 PM - info: Server on port: 60001
+05-03-2024 12:20:05 PM - info: mongodb://127.0.0.1:27017//drone-module.db
+05-03-2024 12:20:05 PM - info: Server on port: 60001
+05-03-2024 12:20:35 PM - crit: Error connecting to mongodb://127.0.0.1:27017//drone-module.db
+05-03-2024 12:20:48 PM - info: mongodb://127.0.0.1:27017//drone-module.db
+05-03-2024 12:20:48 PM - info: Server on port: 60001
+05-03-2024 12:20:50 PM - info: mongodb://127.0.0.1:27017//drone-module.db
+05-03-2024 12:20:50 PM - info: Server on port: 60001
+05-03-2024 12:21:12 PM - info: mongodb://127.0.0.1:27017//drone-module.db
+05-03-2024 12:21:12 PM - info: Server on port: 60001
+05-03-2024 12:21:42 PM - crit: Error connecting to mongodb://127.0.0.1:27017//drone-module.db
+05-03-2024 12:23:28 PM - info: mongodb://127.0.0.1:27017//drone-module.db
+05-03-2024 12:23:59 PM - crit: Error connecting to mongodb://127.0.0.1:27017//drone-module.db
+05-03-2024 12:23:59 PM - info: Server on port: 60001
+05-03-2024 12:25:11 PM - info: mongodb://127.0.0.1:27017//drone-module.db
+05-03-2024 12:25:29 PM - info: mongodb://127.0.0.1:27017//drone-module.db
+05-03-2024 12:25:59 PM - crit: Error connecting to mongodb://127.0.0.1:27017//drone-module.db
+05-03-2024 12:26:22 PM - info: mongodb://127.0.0.1:27017//drone-module.db
+05-03-2024 12:27:06 PM - info: 
+05-03-2024 12:27:13 PM - warn: 
+05-03-2024 12:27:19 PM - warn: Lauching server
+05-03-2024 12:27:21 PM - warn: Lauching server
+05-03-2024 12:27:51 PM - crit: Error connecting to mongodb://127.0.0.1:27017//drone-module.db
+05-03-2024 12:27:51 PM - crit: Error on try/catch ReferenceError: logger is not defined
+05-03-2024 12:27:51 PM - info: Server on port: 60001
+05-03-2024 12:27:51 PM - warn: Lauching server
+05-03-2024 12:27:51 PM - warn: Connecting to MongoDB ${
+05-03-2024 12:28:21 PM - crit: Error connecting to mongodb://127.0.0.1:27017//drone-module.db
+05-03-2024 12:28:21 PM - crit: Error on try/catch ReferenceError: logger is not defined
+05-03-2024 12:28:21 PM - info: Server on port: 60001
+05-03-2024 12:30:31 PM - warn: Lauching server
+05-03-2024 12:30:31 PM - warn: Connecting to MongoDB ${
+05-03-2024 12:30:32 PM - warn: Lauching server
+05-03-2024 12:30:32 PM - warn: Connecting to MongoDB ${
+05-03-2024 12:30:35 PM - warn: Lauching server
+05-03-2024 12:30:35 PM - warn: Connecting to MongoDB ${
+05-03-2024 12:30:46 PM - warn: Lauching server
+05-03-2024 12:30:46 PM - warn: Connecting to MongoDB mongodb://127.0.0.1:27017//drone-module.db
+05-03-2024 12:31:16 PM - crit: Error connecting to mongodb://127.0.0.1:27017//drone-module.db
+05-03-2024 12:32:27 PM - warn: Lauching server
+05-03-2024 12:32:27 PM - warn: Connecting to MongoDB mongodb://127.0.0.1:27017//drone-module.db
+05-03-2024 12:32:58 PM - crit: Error connecting to mongodb://127.0.0.1:27017//drone-module.db
+05-03-2024 12:33:41 PM - warn: Lauching server
+05-03-2024 12:33:41 PM - warn: Connecting to MongoDB mongodb://127.0.0.1:27017//drone-module.db
+05-03-2024 12:34:12 PM - crit: Error connecting to mongodb://127.0.0.1:27017//drone-module.db
+05-03-2024 04:35:41 PM - warn: Lauching server
+05-03-2024 04:35:41 PM - warn: Connecting to MongoDB mongodb://127.0.0.1:27017/drone-module.db
+05-03-2024 04:35:41 PM - crit: Error connecting to mongodb://127.0.0.1:27017/drone-module.db
+05-03-2024 04:37:07 PM - warn: Lauching server
+05-03-2024 04:37:07 PM - warn: Connecting to MongoDB mongodb://127.0.0.1:27017
+05-03-2024 04:37:08 PM - crit: Error on try/catch ReferenceError: __dirname is not defined
+05-03-2024 04:37:23 PM - warn: Lauching server
+05-03-2024 04:37:23 PM - warn: Connecting to MongoDB mongodb://127.0.0.1:27017
+05-03-2024 04:37:23 PM - crit: Error on try/catch ReferenceError: __dirname is not defined
+05-03-2024 04:37:54 PM - warn: Lauching server
+05-03-2024 04:37:54 PM - warn: Connecting to MongoDB mongodb://127.0.0.1:27017
+05-03-2024 04:37:54 PM - crit: Error on try/catch ReferenceError: __dirname is not defined
+05-03-2024 04:38:35 PM - warn: Lauching server
+05-03-2024 04:38:35 PM - warn: Connecting to MongoDB mongodb://127.0.0.1:27017
+05-03-2024 04:38:36 PM - crit: Error on try/catch ReferenceError: __dirname is not defined
+05-03-2024 04:38:54 PM - warn: Lauching server
+05-03-2024 04:38:54 PM - warn: Connecting to MongoDB mongodb://127.0.0.1:27017
+05-03-2024 04:38:54 PM - crit: Error on try/catch ReferenceError: __dirname is not defined
+05-03-2024 04:39:07 PM - warn: Lauching server
+05-03-2024 04:39:07 PM - warn: Connecting to MongoDB mongodb://127.0.0.1:27017
+05-03-2024 04:39:07 PM - crit: Error on try/catch Error: ENOENT: no such file or directory, scandir '\C:\Users\ayuda112\Documents\Zheng\Oroneta\drone-module\src\drone-api\migration'
+05-03-2024 04:40:00 PM - warn: Lauching server
+05-03-2024 04:40:00 PM - warn: Connecting to MongoDB mongodb://127.0.0.1:27017
+05-03-2024 04:40:00 PM - crit: Error on try/catch Error: ENOENT: no such file or directory, scandir '\C:\Users\ayuda112\Documents\Zheng\Oroneta\drone-module\src\drone-api\migration'
+05-03-2024 04:40:03 PM - warn: Lauching server
+05-03-2024 04:40:03 PM - warn: Connecting to MongoDB mongodb://127.0.0.1:27017
+05-03-2024 04:40:03 PM - crit: Error on try/catch Error: ENOENT: no such file or directory, scandir '\C:\Users\ayuda112\Documents\Zheng\Oroneta\drone-module\src\drone-api\migration'
+05-03-2024 04:40:14 PM - warn: Lauching server
+05-03-2024 04:40:14 PM - warn: Connecting to MongoDB mongodb://127.0.0.1:27017
+05-03-2024 04:40:14 PM - crit: Error on try/catch Error: ENOENT: no such file or directory, scandir '\C:\Users\ayuda112\Documents\Zheng\Oroneta\drone-module\src\drone-api\migration'

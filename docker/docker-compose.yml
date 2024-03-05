@@ -1,40 +1,72 @@
 version: '3.8'
 
 services:
-    drone-api:
+    oroneta.drone-module.drone-api:
         build:
-            context: .
-            dockerfile: drone-api.Dockerfile
+            context: ..
+            dockerfile: ./docker/drone-api/Dockerfile
+        container_name: oroneta.drone-module.drone-api
+        env_file:
+            - .env
+        # restart: unless-stopped
         ports:
-            - "80001:80001"
+            - "60001:60001"
+        depends_on:
+            - oroneta.drone-module.drone-mongo
+        volumes:
+            - oroneta.drone-module.drone-api:/log
+        network_mode: "host"
 
-    drone-manager:
-        build:
-            context: .
-            dockerfile: drone-manager.Dockerfile
-        ports:
-            - "80002:80002"
+    # drone-manager:
+    #     build:
+    #         context: .
+    #         dockerfile: drone-manager.Dockerfile
+    #     ports:
+    #         - "80002:80002"
 
-    drone-ai:
-        build:
-            context: .
-            dockerfile: drone-ai.Dockerfile
-        ports:
-            - "80003:80003"
+    # drone-ai:
+    #     build:
+    #         context: .
+    #         dockerfile: drone-ai.Dockerfile
+    #     ports:
+    #         - "80003:80003"
 
-    drone-mongo:
-        image: mongo
-        restart: always
+    oroneta.drone-module.drone-mongo:
+        image: mongo:4.4.6
+        # image: mongo:7.0.6
+        restart: unless-stopped
+        container_name: oroneta.drone-module.drone-mongo
+        ports: 
+            - "27017:27017"
         environment:
-            MONGO_INITDB_ROOT_USERNAME: root
-            MONGO_INITDB_ROOT_PASSWORD: example
+            MONGO_INITDB_ROOT_USERNAME: ${MONGO_DBUSER}
+            MONGO_INITDB_ROOT_PASSWORD: ${MONGO_DBPASS}
+            MONGO_INITDB_DATABASE: ${MONGO_DBNAME}
+        volumes:
+            - oroneta.drone-module.drone-mongo:/data/db/
+            - /etc/timezone:/etc/timezone:ro
+        # network_mode: "host"
 
-    drone-mongo-express:
-        image: mongo-express
-        restart: always
+
+    oroneta.drone-module.drone-mongo-express:
+        image: mongo-express:latest
+        restart: unless-stopped
+        container_name: oroneta.drone-module.drone-mongo-express
         ports:
-            - 8081:8081
+            - "8081:8081"
+        depends_on:
+            - oroneta.drone-module.drone-mongo
         environment:
-            ME_CONFIG_MONGODB_ADMINUSERNAME: root
-            ME_CONFIG_MONGODB_ADMINPASSWORD: example
-            ME_CONFIG_MONGODB_URL: mongodb://root:example@mongo:27017/
+            ME_CONFIG_BASICAUTH_USERNAME: ${MEXPRESS_USER}
+            ME_CONFIG_BASICAUTH_PASSWORD: ${MEXPRESS_PASS}
+            ME_CONFIG_MONGODB_ADMINUSERNAME: ${MONGO_DBUSER}
+            ME_CONFIG_MONGODB_ADMINPASSWORD: ${MONGO_DBPASS}
+            ME_CONFIG_MONGODB_URL: mongodb://${MONGO_DBUSER}:${MONGO_DBPASS}@${MONGO_DBSEVR}:${MONGO_DBPORT}/?authMechanism=DEFAULT
+        network_mode: "host"
+
+    
+volumes:
+    oroneta.drone-module.drone-api:
+        name: oroneta.drone-module.drone-api
+    oroneta.drone-module.drone-mongo:
+        name: oroneta.drone-module.drone-mongo
