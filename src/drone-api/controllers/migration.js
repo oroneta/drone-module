@@ -9,7 +9,7 @@ import fs from 'fs';
 import path from 'path';
 import logger from './logger.js';
 
-import MigrationModel from '../models/Migration.js';
+import MigrationModel from '../models/Migrations.js';
 
 // Import all migrations
 export default class _Migration {
@@ -25,19 +25,19 @@ export default class _Migration {
                 return;
 
             const migrationName = scriptName.split('-')[0];
-            const m = require(`../migration/${scriptName}`);
+            const m = await import(`../migration/${scriptName}`);
             
             try {
                 const migration = await MigrationModel.findOne({ migration: migrationName });
                 
                 if (!migration) {
                     logger.info(`Migration ${migrationName} not registered, executing and registering...`);
-                    await m(db);
+                    await m.default(db);
 
                     try {
                         // Crear una nueva instancia del modelo Migration
                         const newMigration = new MigrationModel({
-                          migration: migrationName
+                            migration: migrationName
                         });
                     
                         await newMigration.save();

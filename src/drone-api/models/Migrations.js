@@ -6,13 +6,13 @@ const migrationSchema = new mongoose.Schema({
     required: true,
     unique: true // Key
   },
-  datetime: {
+  applied_at: {
     type: Date,
     required: true,
     default: Date.now // DATENOW()
   }
 });
 
-const MigrationModel = mongoose.model('Migration', migrationSchema, 'migration');
+const MigrationModel = mongoose.model('Migration', migrationSchema, 'migrations');
 
 export default MigrationModel;

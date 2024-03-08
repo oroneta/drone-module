@@ -2,13 +2,9 @@ import sys, time, requests
 
 
 if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print("Example of use: python {} <metadata>".format(sys.argv[0]))
-        exit(-1)
-
-    url = 'http://127.0.0.1:60001/metadata/all/aaa'
+    url = 'http://127.0.0.1:60001/route/0'
     headers = {
-        'Authorization': 'Bearer tu_token_de_autorizacion'
+        'Authorization': 'Bearer 0'
     }
     try:
         response = requests.get(url, headers=headers)

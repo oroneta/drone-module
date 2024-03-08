@@ -4,7 +4,7 @@ import logger from '../controllers/logger.js';
 export default class DBConnect {
     uri; connection;
     constructor(uri, database) {
-        this.uri = uri;
+        this.uri = uri  + database + '?authSource=admin';
     };
 
     async connect(options) {

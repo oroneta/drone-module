@@ -39,9 +39,29 @@ class _Common {
             }
         );
     }
+    static r500(res) {
+        return res.status(500).json(
+            {
+                status: "error",
+                message: "500 Internal Server Error",
+                errcode: 500
+            }
+        );
+    }
 
 
+    static rJson(res, obj) {
+        if (obj == null || !obj)
+            obj = {}
 
+        return res.status(200).json(
+            {
+                status: "OK",
+                message: "200 OK",
+                data: obj
+            }
+        );
+    }
     static onErrorExit(string) {
         logger.fatal(string);
         process.exit(-1);

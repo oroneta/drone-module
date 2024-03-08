@@ -15,7 +15,7 @@ services:
             - oroneta.drone-module.drone-mongo
         volumes:
             - oroneta.drone-module.drone-api:/log
-        network_mode: "host"
+        # network_mode: "host"
 
     # drone-manager:
     #     build:
@@ -62,7 +62,7 @@ services:
             ME_CONFIG_MONGODB_ADMINUSERNAME: ${MONGO_DBUSER}
             ME_CONFIG_MONGODB_ADMINPASSWORD: ${MONGO_DBPASS}
             ME_CONFIG_MONGODB_URL: mongodb://${MONGO_DBUSER}:${MONGO_DBPASS}@${MONGO_DBSEVR}:${MONGO_DBPORT}/?authMechanism=DEFAULT
-        network_mode: "host"
+        # network_mode: "host"
 
     
 volumes:
