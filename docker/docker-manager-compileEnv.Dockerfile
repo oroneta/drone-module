@@ -1,7 +1,12 @@
 FROM redhat/ubi9:latest
-RUN mkdir -p /app
-WORKDIR /app
-VOLUME /app
-RUN yum install g++ gcc make cmake
-RUN yum install wget curl
-RUN yum install git
+
+LABEL version="0.1"
+LABEL description="entorno para compilar"
+
+RUN mkdir -p /opt/docker-manager
+WORKDIR /opt/docker-manager
+VOLUME /opt/docker-manager
+RUN yum -y update
+RUN yum -y install g++ gcc make cmake
+RUN yum -y --allowerasing install wget curl
+RUN yum -y install git 
