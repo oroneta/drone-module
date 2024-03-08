@@ -8,10 +8,14 @@ namespace drone_manager {
 
         public:
             Coordenada(const float x, const float y);
-            Coordenada(const Coordenada &other) : latitude(other.latitude), longitude(other.longitude) {}
-            bool operator==(const Coordenada &other) const {
-                return (latitude == other.latitude && longitude == other.longitude);
-            }
+            
+            Coordenada(const Coordenada &other);
+
+            bool operator==(const Coordenada &other) const;
+
+            float get_Latitude() const;
+
+            float get_Longitude() const;
 
             friend class Route;
         private:
