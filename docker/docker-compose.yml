@@ -24,12 +24,19 @@ services:
     #     ports:
     #         - "80002:80002"
 
-    # drone-ai:
-    #     build:
-    #         context: .
-    #         dockerfile: drone-ai.Dockerfile
-    #     ports:
-    #         - "80003:80003"
+    oroneta.drone-module.drone-ai:
+        build:
+            context: ..
+            dockerfile: ./docker/drone-api/Dockerfile
+        container_name: oroneta.drone-module.drone-ai
+        # restart: unless-stopped
+        env_file:
+            - .env
+        ports:
+            - "60003:60003"
+        depends_on:
+            - oroneta.drone-module.drone-mongo
+        # network_mode: "host"
 
     oroneta.drone-module.drone-mongo:
         image: mongo:4.4.6
