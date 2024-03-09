@@ -26,6 +26,16 @@ const droneSchema = new mongoose.Schema({
         required: true,
         default: 0
     },
+    flight_priority: {
+        type: Number,
+        required: true,
+        default: 0
+    },
+    flight_altitude: {
+        type: Number,
+        required: true,
+        default: 0
+    },
     alarm_status: {
         type: Boolean,
         required: true,
@@ -36,6 +46,10 @@ const droneSchema = new mongoose.Schema({
         required: true,
         ref: 'Alarm',
         default: 0
+    },
+    alarm_data: {
+        type: String,
+        required: false
     },
     default_action: {
         type: Number,

@@ -22,4 +22,31 @@ export default class _DroneController {
         await newDrone.save();
         return true;
     }
+
+    static async insertOneWithFlight (dic, auth_code, route, priority, altitude) {
+        const newDrone = new DroneModel({
+            dic,
+            auth_code,
+            flight: route,
+            flight_priority: priority,
+            flight_altitude: altitude
+        });
+
+        await newDrone.save();
+        return true;
+    }
+
+    static async updateOneWithFlight (dic, auth_code, route, priority, altitude) {
+        await DroneModel.updateOne({
+            dic,
+            auth_code
+        }, {
+            flight: route,
+            flight_priority: priority,
+            flight_altitude: altitude
+        });
+        return true;
+    }
+
+    
 }

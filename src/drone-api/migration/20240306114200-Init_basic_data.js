@@ -16,4 +16,11 @@ export default async (db) => {
     });
 
     await newDrone.save();
+
+    newDrone = new DroneModel({
+        dic: '1',
+        auth_code: '1'
+    });
+
+    await newDrone.save();
 }
