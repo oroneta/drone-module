@@ -14,7 +14,7 @@ services:
         depends_on:
             - oroneta.drone-module.drone-mongo
         volumes:
-            - oroneta.drone-module.drone-api:/logs
+            - oroneta.drone-module.drone-api:/opt/drone-api/logs
         # network_mode: "host"
 
     # drone-manager:
@@ -35,7 +35,7 @@ services:
         ports:
             - "60003:60003"
         volumes:
-            - oroneta.drone-module.drone-ai:/var
+            - oroneta.drone-module.drone-ai:/opt/drone-ai/var
         depends_on:
             - oroneta.drone-module.drone-mongo
         # network_mode: "host"
