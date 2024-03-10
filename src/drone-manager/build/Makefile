@@ -1,3 +1,4 @@
 TARGET:= drone_manager
-CXXFLAGS:= -I./include 
+CXXFLAGS:= -I../src/h 
+ 
 
