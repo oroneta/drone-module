@@ -5,9 +5,10 @@ import express from 'express';
 import _Common from '../controllers/common.js';
 import _Middleware from '../controllers/middleware.js';
 import logger from '../controllers/logger.js';
-import _ProviderComm from '../controllers/Provider.js';
+import _ProviderComm from '../controllers/provider.js';
 
 import _DroneController from '../controllers/Drones.js';
+import _ImageController from '../controllers/Images.js';
 
 const router = express.Router();
 const provider = new _ProviderComm();
@@ -15,7 +16,7 @@ const provider = new _ProviderComm();
 if (provider.testProvider()) {
     logger.info('Provider is online');
 } else {
-    logger.error('Provider is offline');
+    logger.crit('Provider is offline');
 }
 
 // ========================================
@@ -24,7 +25,7 @@ if (provider.testProvider()) {
     @example: /metadata/all/<dic>
     @obligated: Add authorization header
 */
-router.get('/metadata/:opt/:dic', async (req, res) => {
+router.get('/metadata/:opt/:dic', _Middleware.checkAuth, async (req, res) => {
     if (_Middleware.checkMetadataType(req.params.opt) && req.headers.authorization.startsWith('Bearer ')) {
         let drone, result = {};
         try {
@@ -58,7 +59,7 @@ router.get('/metadata/:opt/:dic', async (req, res) => {
                 return _Common.r404(res);
             }
         } catch (error) {
-            logger.error(error);
+            logger.crit(error);
             return _Common.r500(res);
         }
 
@@ -72,7 +73,7 @@ router.get('/metadata/:opt/:dic', async (req, res) => {
     @example: /status/<dic>
     @obligated: Add authorization header
 */
-router.get('/status/:dic', async (req, res) => {
+router.get('/status/:dic', _Middleware.checkAuth, async (req, res) => {
     if (req.headers.authorization.startsWith('Bearer ')) {
         let drone, result = {};
         try {
@@ -102,7 +103,7 @@ router.get('/status/:dic', async (req, res) => {
                 return _Common.r404(res);
             }
         } catch (error) {
-            logger.error(error);
+            logger.crit(error);
             return _Common.r500(res);
         }
 
@@ -118,7 +119,7 @@ router.get('/status/:dic', async (req, res) => {
     @example: /route/<dic>
     @obligated: Add authorization header
 */
-router.get('/routes/:dic', async (req, res) => {
+router.get('/routes/:dic', _Middleware.checkAuth, async (req, res) => {
     if (req.headers.authorization.startsWith('Bearer ')) {
         let drone, result = {};
         try {
@@ -148,7 +149,7 @@ router.get('/routes/:dic', async (req, res) => {
                 return _Common.r404(res);
             }
         } catch (error) {
-            logger.error(error);
+            logger.crit(error);
             return _Common.r500(res);
         }
 
@@ -198,7 +199,7 @@ router.post('/routes/:dic', async (req, res) => {
             return _Common.r500(res);
         }
         catch (error) {
-            logger.error(error);
+            logger.crit(error);
             return _Common.r500(res);
         }
     }
@@ -212,9 +213,9 @@ router.post('/routes/:dic', async (req, res) => {
     @example: /alarm/<dic>
     @obligated: Add authorization header
 */
-router.get('/alarm/:dic', async (req, res) => {
+router.get('/alarm/:dic', _Middleware.checkAuth, async (req, res) => {
     if (req.headers.authorization.startsWith('Bearer ')) {
-        let drone, result = {};
+        let drone, alarm, result = {};
         try {
             // Remove Bearer Clause
             let authList = req.headers.authorization.split(' ')[1].split(';');
@@ -229,20 +230,22 @@ router.get('/alarm/:dic', async (req, res) => {
             // Get the status of every drone
             for (let i = 0; i < droneList.length; i++) {
                 drone = await _DroneController.findDroneExist(droneList[i], authList[i]);
-                alarm = await _DroneController.findAlarmData(drone[0].alarm_data);
+                alarm = await _ImageController.findImageData(drone[0].alarm_data);
 
                 if (drone.length == 0) {
                     // If not exist, continue to the next drone
                     continue;
                 }
 
-                result[droneList[i]] = {
+                result[droneList[i]] = (drone[0].alarm_status 
+                ?
+                {
                     status: 1,
-                    expire_date: alarm.expire_date,
+                    expire_date: alarm[0].expire_date,
                     image_path: `/alarm/image/${drone[0].alarm_data}`
-                } ? drone[0].alarm_status : {
+                } : {
                     status: 0,
-                };
+                });
             }
 
             // If any drone exist, return 404
@@ -250,7 +253,7 @@ router.get('/alarm/:dic', async (req, res) => {
                 return _Common.r404(res);
             }
         } catch (error) {
-            logger.error(error);
+            logger.crit(error);
             return _Common.r500(res);
         }
 
@@ -266,7 +269,7 @@ router.get('/alarm/:dic', async (req, res) => {
 router.get('/alarm/image/:image', async (req, res) => {
     // Return image from the database
     try {
-        let image = await _DroneController.findAlarmData(req.params.image);
+        let image = await _ImageController.findImageData(req.params.image);
         if (image.length == 0) {
             return _Common.r404(res);
         }
@@ -277,7 +280,7 @@ router.get('/alarm/image/:image', async (req, res) => {
         });
         res.end(image[0].data);
     } catch (error) {
-        logger.error(error);
+        logger.crit(error);
         return _Common.r500(res);
     }
 });
