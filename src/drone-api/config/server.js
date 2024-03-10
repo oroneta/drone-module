@@ -1,6 +1,6 @@
 const _server_config = {
     name: "oroneta.drone-module.drone-api",
-    port: process.env.SERVER_PORT || 60001,
+    port: process.env.API_PORT || 60001,
     log: {
         path: "./logs",
         logfile: "server.log",
