@@ -1,5 +1,7 @@
 #include "drone.hpp"
 #include "route.hpp"
+#include "db_manager.hpp"
+#include "AMDP_Server.hpp"
 
-#define DRONE_MANAGER_PORT 60002
+
 
