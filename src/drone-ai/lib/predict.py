@@ -1,0 +1,1 @@
+# Aqui estan las funciones que hacen predicciones

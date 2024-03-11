@@ -15,7 +15,6 @@ import routes from './routes/routes.js';
 */
 import logger from './controllers/logger.js';
 import _Common from './controllers/common.js';
-import _Middleware from './controllers/middleware.js';
 import _Migration from './controllers/migration.js';
 
 /*
@@ -55,7 +54,6 @@ const app = express();
     * ROUTES
     * CHECKAUTH
 */
-app.use(_Middleware.checkAuth);
 app.use(express.json());
 app.use(routes);
 
