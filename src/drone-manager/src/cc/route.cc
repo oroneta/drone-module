@@ -15,3 +15,7 @@ bool Coordenada::operator==(const Coordenada &other) const {
 float Coordenada::get_Latitude() const { return latitude; }
 
 float Coordenada::get_Longitude() const { return longitude; }
+
+void Coordenada::operator=(const Coordenada &other) {
+    latitude = other.latitude; longitude = other.longitude;
+}

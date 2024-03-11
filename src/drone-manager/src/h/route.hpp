@@ -13,6 +13,8 @@ namespace drone_manager {
 
             bool operator==(const Coordenada &other) const;
 
+            void operator=(const Coordenada &other);
+
             float get_Latitude() const;
 
             float get_Longitude() const;

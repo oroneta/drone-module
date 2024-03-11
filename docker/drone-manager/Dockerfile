@@ -3,11 +3,11 @@ FROM mongodb/mongo-cxx-driver:3.9.0-redhat-ubi-9.3 as builder
 
 WORKDIR /opt/oronetaBuilder
 
-RUN microdnf upgrade -y && microdnf install -y g++
+RUN microdnf upgrade -y && microdnf install -y g++ gcc  make cmake
 
 
 # Esto de aqui abajo es de ejemplo -------
-RUN mkdir ./bin
+RUN mkdir -p ./bin
 RUN echo "Holaaaa" > ./bin/test.log
 # Copias lo que necesites
 # Y haces compile

@@ -3,5 +3,8 @@
 #include "db_manager.hpp"
 #include "AMDP_Server.hpp"
 
+int main(int argc, char **argv) {
 
+    return 0;
+}
 
