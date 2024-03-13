@@ -61,7 +61,7 @@ app.use(routes);
 /*
     Start the server
 */
-app.listen(_server_config.port, () => {
+app.listen(_server_config.port, '0.0.0.0', () => {
     var info = _server_config.log.init
                                     .replace("$port", _server_config.port);
     // Server activated
