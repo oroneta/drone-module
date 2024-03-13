@@ -6,60 +6,62 @@
 #include "route.hpp"
 
 /**********************************************************************************************************/
-//Movement codes
-//1XX
+// Movement codes
+// 1XX
 #define DRONE_NORMAL_UP 100
 #define DRONE_SLOW_UP 101
 #define DRONE_FAST_UP 102
 
-//2xx
+// 2xx
 #define DRONE_NORMAL_DOWN 200
-//#define DRONE_SLOW_DOWN 201
-//#define DRONE_FAST_DOWN 202
+// #define DRONE_SLOW_DOWN 201
+// #define DRONE_FAST_DOWN 202
 
-//3xx
+// 3xx
 #define DRONE_NORMAL_LEFT 300
-//#define DRONE_SLOW_LEFT 301
-//#define DRONE_FAST_LEFT 302
+// #define DRONE_SLOW_LEFT 301
+// #define DRONE_FAST_LEFT 302
 
-//4xx
+// 4xx
 #define DRONE_NORMAL_RIGHT 400
-//#define DRONE_SLOW_RIGHT 401
-//#define DRONE_FAST_RIGHT 402
+// #define DRONE_SLOW_RIGHT 401
+// #define DRONE_FAST_RIGHT 402
 
-//5xx
+// 5xx
 #define DRONE_NORMAL_FRONT 500
-//#define DRONE_SLOW_FRONT 501
-//#define DRONE_FAST_FRONT 502
+// #define DRONE_SLOW_FRONT 501
+// #define DRONE_FAST_FRONT 502
 
-//6xx
+// 6xx
 #define DRONE_NORMAL_BACK 600
-//#define DRONE_SLOW_BACK 601
-//#define DRONE_FAST_BACK 602
+// #define DRONE_SLOW_BACK 601
+// #define DRONE_FAST_BACK 602
 
-//7xx
+// 7xx
 #define DRONE_STOP 700
 
 /*********************************************************************************************************/
 
-namespace drone_manager {
-    
-    class Drone {
+namespace drone_manager
+{
+
+    class Drone
+    {
     public:
-        //Constructor
-        Drone(const std::string m, const float s, const Coordinate c);
-        
-        //Destructor
+        // Constructor
+        Drone(const std::string m, const Coordinate c, const float o);
+
+        // Destructor
         ~Drone() {}
 
-        //GETTERS
+        // GETTERS
         std::string get_Matricula() const;
         float get_Speed() const;
         float get_Height() const;
         Coordinate get_Coordinate() const;
         std::shared_ptr<Route> get_Route() const;
 
-        //SETTERS
+        // SETTERS
         void set_Matricula(const std::string &m);
         void set_Speed(const float &s);
         void set_Height(const float &a);
@@ -68,13 +70,12 @@ namespace drone_manager {
 
     private:
         std::string matricula;
-        float speed;
-        float height;
         std::shared_ptr<Route> route;
         Coordinate actual;
-
+        float orientation;
+        float speed;
+        float height;
     };
 }
 
-
-#endif  
+#endif

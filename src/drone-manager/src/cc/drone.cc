@@ -2,8 +2,8 @@
 
 using namespace drone_manager;
 
-Drone::Drone(const std::string m, const float s, const Coordinate c) : matricula(m), speed(s), height(0), actual(c) {
-
+Drone::Drone(const std::string m, const Coordinate c, const float o) : matricula(m), actual(c), orientation(0), speed(0), height(0)
+{
 }
 
 std::string Drone::get_Matricula() const { return matricula; }
@@ -18,21 +18,22 @@ std::shared_ptr<Route> Drone::get_Route() const { return route; }
 
 /*******************************************************************************************************************************************/
 
-void Drone::set_Matricula(const std::string &m) {
+void Drone::set_Matricula(const std::string &m)
+{
     matricula = m;
 }
 
-void Drone::set_Speed(const float &s) {
+void Drone::set_Speed(const float &s)
+{
     speed = s;
 }
 
-void Drone::set_Height(const float &a) { 
+void Drone::set_Height(const float &a)
+{
     height = a;
 }
 
-void Drone::set_Coordinate(const Coordinate &c) {
+void Drone::set_Coordinate(const Coordinate &c)
+{
     actual = c;
 }
-
-
-

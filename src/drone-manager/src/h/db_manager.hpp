@@ -12,13 +12,32 @@
 #include <mongocxx/stdx.hpp>
 #include <mongocxx/uri.hpp>
 
+#include <string>
+
 #define MONGO_DB_PORT 27017
 
-//Before co
+// Before co
+namespace drone_manager
+{
+    class MongoDB_Manager
+    {
+    public:
+        MongoDB_Manager(const string &u);
 
-class MongoDB_Manager {
+        ~MongoDB_Manager() {}
 
+        // Getters
+        mongocxx::client &get_client() const;
+        mongocxx::uri get_uri();
+        mongocxx::database &get_database(std::string db_name) const;
+        mongocxx::collection &get_collection(mongocxx::database &db, std::string coll_name) const;
+        // other methods
+        void change_uri(mongocxx::uri &u);
 
-};
+    private:
+        mongocxx::uri uri;
+        mongocxx::client client;
+    };
+}
 
 #endif
