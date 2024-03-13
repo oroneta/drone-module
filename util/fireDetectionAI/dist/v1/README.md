@@ -1,0 +1,1 @@
+This version of model only can detect fire, but the precision of prediction is the better one.
