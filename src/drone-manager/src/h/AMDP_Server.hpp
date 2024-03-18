@@ -51,17 +51,37 @@
 #define SOCKET_BIND_FAILED -2
 #define SOCKET_LISTEN_FAILED -3
 #define SOCKET_CLIENT_FAILED -4
+#define SOCKET_READ_FAILED -5
+#define SOCKET_SETOPT_FAILED -6
+/*********************************************************************************************************/
+
+/*********************************************************************************************************/
+#define BUFFER_SIZE 1024
 
 class AMDP_Server
 {
 private:
     int socket_with_client;
-    //sockaddr_in client_address;
+    // sockaddr_in client_address;
     std::shared_ptr<mongocxx::client> mongo_client;
+    //TODO: implement--------------------------------------------
+    void handle_wake_message(std::vector<std::string> &messages);
 
+    void handle_push_message(std::vector<std::string> &messages);
+
+    void handle_receive_message(std::vector<std::string> &messages);
+
+    void handle_request_message(std::vector<std::string> &messages);
+
+    void handle_response_message(std::vector<std::string> &messages);
+
+    void handle_close_message(std::vector<std::string> &messages);
+
+    void handle_end_message(std::vector<std::string> &messages);
+    //TODO: implement--------------------------------------------
 public:
     // Constructors
-    AMDP_Server(int socket_fd, mongocxx::client* client);
+    AMDP_Server(const int socket_fd, mongocxx::client *client);
     // Destructor
     ~AMDP_Server() {}
 
@@ -70,6 +90,22 @@ public:
     // Setters
     void start();
     // Other methods
+    int get_message_type(const std::string &msg) const;
+
+    std::string get_message_string(const MessageType m) const; 
+
+    void treat_message(std::vector<std::string> &msg) const; //TODO
+};
+
+enum MessageType
+{
+    WAKE = 1,
+    PUSH = 2,
+    RECEIVE = 3,
+    REQUEST = 4,
+    RESPONSE = 5,
+    CLOSE = 6,
+    END = 7
 };
 
 #endif

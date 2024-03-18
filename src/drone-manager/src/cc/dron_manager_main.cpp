@@ -16,7 +16,7 @@
 #include <mongocxx/instance.hpp>
 #include <mongocxx/stdx.hpp>
 #include <mongocxx/uri.hpp>
-#include <mongocxx/pool.hpp> 
+#include <mongocxx/pool.hpp>
 
 #include <json/json.h>
 
@@ -51,7 +51,12 @@ int main(int argc, char **argv)
     }
 
     cout << "Socket created!" << endl;
+    int opt = 1;
 
+    if (setsockopt(server_socket, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT | SOCK_NONBLOCK, &opt, sizeof(opt)))
+    {
+        return SOCKET_SETOPT_FAILED;
+    }
     // Setting IPv4 address and port
     int port = DRONE_MANAGER_PORT;
     struct sockaddr_in server_addr;
@@ -100,7 +105,7 @@ int main(int argc, char **argv)
                 close(client_socket);
                 return SOCKET_CLIENT_FAILED;
             }
-            
+
             mongocxx::client *c = new mongocxx::client(uri);
             AMDP_Server server(client_socket, c);
 
