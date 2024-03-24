@@ -1,22 +1,16 @@
 #include "AMDP_Server.hpp"
+#include "Parser.hpp"
 #include <sstream>
 #include <vector>
+#include <memory>
+#include <mavsdk/mavsdk.h>
+#include <bsoncxx/builder/basic/document.hpp>
+#include <bsoncxx/builder/basic/kvp.hpp>
 // TODO: Server that processes drone requests and responses
 
-// Utility functions
-std::vector<std::string> split(std::string str, const std::string &delimiter)
-{
-    std::vector<std::string> result;
-    std::string aux = "";
-    size_t i = 0;
-    while ((i = str.find(delimiter)) != std::string::npos)
-    {
-        aux = str.substr(0, i);
-        str.erase(0, i + delimiter.length());
-        result.push_back(aux);
-    }
-    return result;
-}
+using bsoncxx::builder::basic::kvp;
+using bsoncxx::builder::basic::make_document;
+using drone_manager::Parser;
 
 // constructor
 AMDP_Server::AMDP_Server(const int socket_fd, mongocxx::client *client) : socket_with_client(socket_fd), mongo_client(client)
@@ -31,7 +25,13 @@ int AMDP_Server::get_socket_with_client() const
 void AMDP_Server::start()
 {
     char *buffer = new char[BUFFER_SIZE]; // TODO: temporal buffer size
+    memset(buffer, '\0', BUFFER_SIZE);
 
+    delete[] buffer;
+}
+
+int AMDP_Server::amdp_protocol(char *buffer)
+{
     int bytes_read = recv(socket_with_client, buffer, BUFFER_SIZE, 0);
 
     if (bytes_read == -1)
@@ -40,33 +40,41 @@ void AMDP_Server::start()
         exit(SOCKET_READ_FAILED);
     }
     std::string message(buffer);
-    std::vector<std::string> lines = split(message, "\r\n");
+    std::vector<std::string> lines = Parser::split(message, "\r\n");
 
-    switch (get_message_type(lines[1]))
+    if (get_message_type(lines[1]) != WAKE)
     {
-    case MessageType::WAKE:
-        /* code */
-        break;
+        // Check that it starts with a wake message
+        std::cout << "Warning!: It is not a start message!" << std::endl;
+        memset(buffer, 0, BUFFER_SIZE);
+        strcpy(buffer, "Closing connection, it is not a wake message!");
+        send(socket_with_client, buffer, strlen(buffer), 0);
+        close(socket_with_client);
+        return WRONG_MESSAGE_TYPE;
+    }
 
-    case MessageType::PUSH:
-        break;
+    std::string drone_code = lines[2];
+    std::string drone_auth_code = lines[3];
+    // get the database and drones table
+    mongocxx::database drone_db = (*mongo_client)[getenv("MONGO_DBNAME")];
+    mongocxx::collection drone_collection = drone_db["drones"];
 
-    case MessageType::RECEIVE:
-        break;
+    // Prepare document for query
+    bsoncxx::document::view query = make_document(
+        kvp("dic", drone_code),
+        kvp("auth_code", drone_auth_code));
 
-    case MessageType::REQUEST:
-        break;
-
-    case MessageType::RESPONSE:
-        break;
-
-    case MessageType::CLOSE:
-        break;
-
-    case MessageType::END:
-        break;
-    default:
-        break;
+    // query for the specific drone information in the database
+    auto drone = drone_collection.find_one(query);
+    if (!drone.has_value())
+    { // Drone not found in the mongo database
+        std::cout << "Error: No drone found in the mongo database" << std::endl;
+        std::cout << "drone_code: " << drone_code << std::endl;
+        memset(buffer, 0, BUFFER_SIZE);
+        strcpy(buffer, "Closing connection, the drone code specified does not exist!");
+        send(socket_with_client, buffer, strlen(buffer), 0);
+        close(socket_with_client);
+        return DRONE_CODE_NO_EXIST;
     }
 }
 

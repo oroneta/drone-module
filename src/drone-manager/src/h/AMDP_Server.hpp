@@ -20,6 +20,8 @@
 #include <mongocxx/stdx.hpp>
 #include <mongocxx/uri.hpp>
 
+#include "drone.hpp"
+
 // Port Numbers
 #define MONGO_DB_PORT 27017
 #define DRONE_API_PORT 60001
@@ -55,6 +57,8 @@
 #define SOCKET_SETOPT_FAILED -6
 /*********************************************************************************************************/
 
+#define WRONG_MESSAGE_TYPE -1
+#define DRONE_CODE_NO_EXIST -2
 /*********************************************************************************************************/
 #define BUFFER_SIZE 1024
 
@@ -78,6 +82,10 @@ private:
     void handle_close_message(std::vector<std::string> &messages);
 
     void handle_end_message(std::vector<std::string> &messages);
+
+    static float check_orientation(const drone_manager::Coordinate &coord);
+
+    int amdp_protocol(char* buffer);
     //TODO: implement--------------------------------------------
 public:
     // Constructors

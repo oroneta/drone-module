@@ -10,10 +10,14 @@
 
 // TODO: Create my own parser or use opensource
 
-class JSON_Parser
+namespace drone_manager
 {
-private:
-public:
-};
+    class Parser
+    {
+    private:
+    public:
+        static std::vector<std::string> split(std::string str, const std::string &delimiter);
+    };
+}
 
 #endif
