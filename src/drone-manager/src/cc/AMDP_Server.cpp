@@ -38,61 +38,6 @@ void AMDP_Server::start()
 
 int AMDP_Server::amdp_protocol()
 {
-    /* Deprecated
-    int bytes_read = recv(socket_with_client, buffer, BUFFER_SIZE, 0);
-
-    if (bytes_read == -1)
-    {
-        std::cerr << "Read from socket failed failed" << std::endl;
-        exit(SOCKET_READ_FAILED);
-    }
-    std::string message(buffer);
-    std::vector<std::string> lines = Parser::split(message, "\r\n");
-
-    if (get_message_type(lines[1]) != WAKE)
-    {
-        // Check that it starts with a wake message
-        std::cout << "Warning!: It is not a start message!" << std::endl;
-        memset(buffer, '\0', BUFFER_SIZE);
-        sprintf(buffer, "DCMP %.1f\r\n%s\r\n%d\r\n\r\n", atof(getenv("DCMP_VERSION")), get_message_string(CLOSE),
-                AMDP_SERVER_AUNTHENTICATION_FAILED);
-        send(socket_with_client, buffer, strlen(buffer), 0);
-        close(socket_with_client);
-        return WRONG_MESSAGE_TYPE;
-    }
-
-    std::string drone_code = lines[2];
-    std::string drone_auth_code = lines[3];
-    // get the database and drones table
-    mongocxx::database drone_db = (*mongo_client)[getenv("MONGO_DBNAME")];
-    mongocxx::collection drone_collection = drone_db["drones"];
-
-    // Prepare document for query
-    bsoncxx::document::view query = make_document(
-        kvp("dic", drone_code),
-        kvp("auth_code", drone_auth_code));
-
-    // query for the specific drone information in the database
-    auto drone = drone_collection.find_one(query);
-    if (!drone.has_value())
-    { // Drone not found in the mongo database
-        std::cout << "Error: No drone found in the mongo database" << std::endl;
-        std::cout << "drone_code: " << drone_code << std::endl;
-        memset(buffer, '\0', BUFFER_SIZE);
-        sprintf(buffer, "DCMP %.1f\r\n%s\r\n%d\r\n\r\n", atof(getenv("DCMP_VERSION")), get_message_string(CLOSE),
-                AMDP_SERVER_AUNTHENTICATION_FAILED);
-        send(socket_with_client, buffer, strlen(buffer), 0);
-        close(socket_with_client);
-        return DRONE_CODE_NO_EXIST;
-    }
-
-    std::cout << "Correct: Drone found in the mongo database" << std::endl;
-    std::cout << "drone_code: " << drone_code << std::endl;
-    memset(buffer, '\0', BUFFER_SIZE);
-    sprintf(buffer, "DCMP %.1f\r\n%s\r\n%d\r\n\r\n", atof(getenv("DCMP_VERSION")), get_message_string(WAKE),
-            AMDP_SERVER_OK);
-    */
-    //ConnectionResult result = mavsdk->add_udp_connection(14540, ForwardingOption::ForwardingOn);
     ConnectionResult res = mavsdk->add_udp_connection(atoi(getenv("MANAGER_PORT")), ForwardingOption::ForwardingOn); //getenv("MANAGER_PORT");
     if(res != ConnectionResult::Success) {
         std::cerr << "Connection errors: " << res << std::endl;
@@ -107,7 +52,18 @@ int AMDP_Server::amdp_protocol()
 
     auto info = Info{system.value()};
     
+    auto id = info.get_identification();
+    if(id.first != Info::Result::Success) {
+        std::cerr << "Error: cannot get drone identification\n";
+        return IDENTIFICATION_ERROR;
+    }
 
+    if(check_drone_identification(id.second)) {
+        std::cerr << "Error: drone no registered\n";
+        return DRONE_NO_REGISTERED;
+    }
+
+    auto plan = prepare_mission(id.second);
 
     auto action = Action{system.value()};
     auto mission = Mission{system.value()};
@@ -121,8 +77,14 @@ int AMDP_Server::amdp_protocol()
 
     telemetry.subscribe_position([](Telemetry::Position position) {
         std::cout << "Altitude: " << position.relative_altitude_m << " m\n";
+        std::cout << "Absolute Altitude: " << position.absolute_altitude_m << " m\n";
+        std::cout << "Latitude: " << position.latitude_deg << " deg\n";
+        std::cout << "Longitude: " << position.longitude_deg << " deg\n";
     });
 
+    telemetry.subscribe_heading([](Telemetry::Heading heading) {
+        std::cout << "Heading: " << heading.heading_deg << " deg\n";
+    });
 
     while (!telemetry.health_all_ok()) {
         std::cout << "Waiting for system to be ready\n";
@@ -160,6 +122,17 @@ int AMDP_Server::amdp_protocol()
 
 }
 
+Mission::MissionPlan prepare_mission(Info::Identification id) {
+    //! TODO: 
+    
+}
+
+bool check_drone_identification(Info::Identification id) {
+    //TODO: Future version. For now, return always true.
+    return true;
+}
+
+/*
 int AMDP_Server::get_message_type(const std::string &mg) const
 {
     if (mg == "WAKE")
@@ -212,8 +185,4 @@ std::string AMDP_Server::get_message_string(const MessageType m) const
 
     return message;
 }
-
-void AMDP_Server::check_new_connection() {
-    server_mutex.lock();
-
-}
+*/

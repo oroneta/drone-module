@@ -37,46 +37,17 @@
 #define DRONE_AI_PORT 60003
 /*********************************************************************************************************/
 
-// Status codes
-// 1xx
-#define AMDP_SERVER_OVERLOAD 100
-
-// 2xx
-#define AMDP_SERVER_OK 200
-#define AMDP_SERVER_OK_MODIFY 201
-
-// 3xx
-#define AMDP_SERVER_MOVED 300
-
-// 4xx
-#define AMDP_SERVER_SYNTAX_ERROR 400
-#define AMDP_SERVER_AUNTHENTICATION_FAILED 401
-
-// 5xx
-#define AMDP_SERVER_COLLAPSED 500
-#define AMDP_SERVER_CANNOT_RESPOND 501
-
 /*********************************************************************************************************/
 #define CONNECTION_FAILED -1
 #define TIMEOUT_CONNECTION -2
+#define IDENTIFICATION_ERROR -3
+#define DRONE_NO_REGISTERED -4
 
 /*********************************************************************************************************/
 
-#define WRONG_MESSAGE_TYPE -1
-#define DRONE_CODE_NO_EXIST -2
 /*********************************************************************************************************/
 #define BUFFER_SIZE 1024
 
-enum MessageType
-{
-    WAKE = 1,
-    PUSH = 2,
-    RECEIVE = 3,
-    REQUEST = 4,
-    RESPONSE = 5,
-    CLOSE = 6,
-    END = 7
-};
 class AMDP_Server
 {
 private:
@@ -86,9 +57,9 @@ private:
 
     std::shared_ptr<mavsdk::Mavsdk> mavsdk;
 
-    std::mutex server_mutex;
+    //std::mutex server_mutex;
     //TODO: implement--------------------------------------------
-    void handle_wake_message(std::vector<std::string> &messages);
+    /*void handle_wake_message(std::vector<std::string> &messages);
 
     void handle_push_message(std::vector<std::string> &messages);
 
@@ -102,11 +73,25 @@ private:
 
     void handle_end_message(std::vector<std::string> &messages);
 
-    static float check_orientation(const drone_manager::Coordinate &coord);
+    static float check_orientation(const drone_manager::Coordinate &coord);*/
 
     int amdp_protocol();
 
-    void show_drone_info() const;
+    //void show_drone_info() const;
+
+    /**
+     * @brief Function for getting routes from mongodb and prepare the mission for the drone
+     * @param Info::Identification
+     * @return Mission::MissionPlan
+    */
+    Mission::MissionPlan prepare_mission(Info::Identification id) const;
+
+    /**
+     * @brief Function for checking if drone is registered
+     * @param Info::Identification
+     * @return bool
+    */
+    bool check_drone_identification(Info::Identification id) const;
     //TODO: implement--------------------------------------------
 public:
     // Constructors
@@ -117,15 +102,16 @@ public:
     // Getters
     int get_socket_with_client() const;
     // Setters
-    void start();
+    
     // Other methods
-    int get_message_type(const std::string &msg) const;
+    //int get_message_type(const std::string &msg) const;
 
-    std::string get_message_string(const MessageType m) const; 
+    //std::string get_message_string(const MessageType m) const; 
 
-    void treat_message(std::vector<std::string> &msg) const; //TODO
+    //void treat_message(std::vector<std::string> &msg) const; //TODO
+    void start();
 
-    void check_new_connection();
+    /*void check_new_connection();*/
 };
 
 #endif
