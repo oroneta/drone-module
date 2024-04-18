@@ -22,7 +22,7 @@ namespace drone_manager
     class MongoDB_Manager
     {
     public:
-        MongoDB_Manager(const string &u);
+        MongoDB_Manager(const std::string &u);
 
         ~MongoDB_Manager() {}
 

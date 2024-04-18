@@ -12,6 +12,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <memory>
+#include <chrono>
 
 #include <bsoncxx/builder/basic/document.hpp>
 #include <bsoncxx/json.hpp>
@@ -19,6 +20,13 @@
 #include <mongocxx/instance.hpp>
 #include <mongocxx/stdx.hpp>
 #include <mongocxx/uri.hpp>
+#include <mavsdk/mavsdk.h>
+#include <future>
+#include <mavsdk/mavsdk.h>
+#include <mavsdk/plugins/action/action.h>
+#include <mavsdk/plugins/mission/mission.h>
+#include <mavsdk/plugins/telemetry/telemetry.h>
+#include <mavsdk/plugins/info/info.h>
 
 #include "drone.hpp"
 
@@ -49,12 +57,9 @@
 #define AMDP_SERVER_CANNOT_RESPOND 501
 
 /*********************************************************************************************************/
-#define SOCKET_CREATION_FAILED -1
-#define SOCKET_BIND_FAILED -2
-#define SOCKET_LISTEN_FAILED -3
-#define SOCKET_CLIENT_FAILED -4
-#define SOCKET_READ_FAILED -5
-#define SOCKET_SETOPT_FAILED -6
+#define CONNECTION_FAILED -1
+#define TIMEOUT_CONNECTION -2
+
 /*********************************************************************************************************/
 
 #define WRONG_MESSAGE_TYPE -1
@@ -62,12 +67,26 @@
 /*********************************************************************************************************/
 #define BUFFER_SIZE 1024
 
+enum MessageType
+{
+    WAKE = 1,
+    PUSH = 2,
+    RECEIVE = 3,
+    REQUEST = 4,
+    RESPONSE = 5,
+    CLOSE = 6,
+    END = 7
+};
 class AMDP_Server
 {
 private:
     int socket_with_client;
     // sockaddr_in client_address;
     std::shared_ptr<mongocxx::client> mongo_client;
+
+    std::shared_ptr<mavsdk::Mavsdk> mavsdk;
+
+    std::mutex server_mutex;
     //TODO: implement--------------------------------------------
     void handle_wake_message(std::vector<std::string> &messages);
 
@@ -85,11 +104,13 @@ private:
 
     static float check_orientation(const drone_manager::Coordinate &coord);
 
-    int amdp_protocol(char* buffer);
+    int amdp_protocol();
+
+    void show_drone_info() const;
     //TODO: implement--------------------------------------------
 public:
     // Constructors
-    AMDP_Server(const int socket_fd, mongocxx::client *client);
+    AMDP_Server(const int socket_fd, mongocxx::client *client, mavsdk::Mavsdk *mav);
     // Destructor
     ~AMDP_Server() {}
 
@@ -103,17 +124,8 @@ public:
     std::string get_message_string(const MessageType m) const; 
 
     void treat_message(std::vector<std::string> &msg) const; //TODO
-};
 
-enum MessageType
-{
-    WAKE = 1,
-    PUSH = 2,
-    RECEIVE = 3,
-    REQUEST = 4,
-    RESPONSE = 5,
-    CLOSE = 6,
-    END = 7
+    void check_new_connection();
 };
 
 #endif

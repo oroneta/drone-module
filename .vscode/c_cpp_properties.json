@@ -6,7 +6,8 @@
                 "${workspaceFolder}/**",
                 "/usr/local/include/mongocxx/v_noabi",
                 "/usr/local/include/bsoncxx/v_noabi",
-                "/usr/local/include/jsoncpp"
+                "/usr/local/include/jsoncpp",
+                "/usr/include/mavsdk"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/gcc",
