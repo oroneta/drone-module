@@ -28,107 +28,135 @@ int AMDP_Server::get_socket_with_client() const
     return socket_with_client;
 }
 
-void AMDP_Server::start()
+int AMDP_Server::start()
 {
-    
-    int res = amdp_protocol();
 
-    while (true) {}
-}
+    /*ConnectionResult res = mavsdk->add_udp_connection(DRONE_MANAGER_PORT, ForwardingOption::ForwardingOff); // atoi(getenv("MANAGER_PORT"))
+    if (res != ConnectionResult::Success)
+    {
+        std::cerr << "Connection errors: " << res << std::endl;
+        return CONNECTION_FAILED;
+    }*/
 
-int AMDP_Server::amdp_protocol()
-{
-    ConnectionResult res = mavsdk->add_udp_connection(atoi(getenv("MANAGER_PORT")), ForwardingOption::ForwardingOn); //getenv("MANAGER_PORT");
-    if(res != ConnectionResult::Success) {
+    ConnectionResult res = mavsdk->add_udp_connection(14540, ForwardingOption::ForwardingOff); //
+    if (res != ConnectionResult::Success)
+    {
         std::cerr << "Connection errors: " << res << std::endl;
         return CONNECTION_FAILED;
     }
 
-    auto system = mavsdk->first_autopilot(-1.0); //waiting for drone no timeout, negative value means no timeout
-    if(!system) {
+    auto system = mavsdk->first_autopilot(-1.0); // waiting for drone, negative value means no timeout
+    if (!system)
+    {
         std::cerr << "Timed out! No drone connection\n";
         return TIMEOUT_CONNECTION;
     }
 
     auto info = Info{system.value()};
-    
+
     auto id = info.get_identification();
-    if(id.first != Info::Result::Success) {
+    if (id.first != Info::Result::Success)
+    {
         std::cerr << "Error: cannot get drone identification\n";
         return IDENTIFICATION_ERROR;
     }
 
-    if(check_drone_identification(id.second)) {
+    if (!check_drone_identification(id.second))
+    {
         std::cerr << "Error: drone no registered\n";
+        std::cerr << id.second.hardware_uid << std::endl;
         return DRONE_NO_REGISTERED;
     }
 
-    auto plan = prepare_mission(id.second);
+    std::cout << "Drone ID: " << id.second.hardware_uid << std::endl;
+
+    auto plan = prepare_mission(id.second); // get the mission path from database base on the drone ID
 
     auto action = Action{system.value()};
     auto mission = Mission{system.value()};
     auto telemetry = Telemetry{system.value()};
 
     const auto set_rate_result = telemetry.set_rate_position(1.0);
-    if (set_rate_result != Telemetry::Result::Success) {
+    if (set_rate_result != Telemetry::Result::Success)
+    {
         std::cerr << "Setting rate failed: " << set_rate_result << '\n';
         return 1;
     }
 
-    telemetry.subscribe_position([](Telemetry::Position position) {
+    telemetry.subscribe_position([](Telemetry::Position position)
+                                 {
         std::cout << "Altitude: " << position.relative_altitude_m << " m\n";
-        std::cout << "Absolute Altitude: " << position.absolute_altitude_m << " m\n";
+        //std::cout << "Absolute Altitude: " << position.absolute_altitude_m << " m\n";
         std::cout << "Latitude: " << position.latitude_deg << " deg\n";
-        std::cout << "Longitude: " << position.longitude_deg << " deg\n";
-    });
+        std::cout << "Longitude: " << position.longitude_deg << " deg\n"; });
 
-    telemetry.subscribe_heading([](Telemetry::Heading heading) {
-        std::cout << "Heading: " << heading.heading_deg << " deg\n";
-    });
+    telemetry.subscribe_heading([](Telemetry::Heading heading)
+                                { std::cout << "Heading: " << heading.heading_deg << " deg\n"; });
 
-    while (!telemetry.health_all_ok()) {
+    while (!telemetry.health_all_ok())
+    {
         std::cout << "Waiting for system to be ready\n";
-        sleep_for(std::chrono::seconds(3));
-    }
-    
-    // Take off
-    std::cout << "Taking off...\n";
-    const Action::Result takeoff_result = action.takeoff();
-    if (takeoff_result != Action::Result::Success) {
-        std::cerr << "Takeoff failed: " << takeoff_result << '\n';
-        return 1;
+        sleep_for(std::chrono::seconds(2));
     }
 
+    std::cout << "Arming drone\n";
+    const Action::Result actionRes = action.arm();
+    if(actionRes != Action::Result::Success) {
+        std::cerr << "Arming drone failed" << std::endl;
+        return DRONE_ARM_ERROR;
+    }
+
+    // Take off
+    std::cout << "Takeoff order!\n";
+    const Action::Result takeoff_result = action.takeoff();
+    if (takeoff_result != Action::Result::Success)
+    {
+        std::cerr << "Takeoff failed: " << takeoff_result << '\n';
+        return DRONE_TAKEOFF_ERROR;
+    }
     // Let it hover for a bit before landing again.
-    sleep_for(seconds(10));
+    sleep_for(seconds(20));
 
     std::cout << "Landing...\n";
     const Action::Result land_result = action.land();
-    if (land_result != Action::Result::Success) {
+    if (land_result != Action::Result::Success)
+    {
         std::cerr << "Land failed: " << land_result << '\n';
-        return 1;
+        return DRONE_LANDING_ERROR;
     }
 
-        // Check if vehicle is still in air
-    while (telemetry.in_air()) {
-        std::cout << "Vehicle is landing...\n";
+    // Check if vehicle is still in air
+    std::cout << "landing...";
+    while (telemetry.in_air())
+    {
+        std::cout << ".";
         sleep_for(seconds(1));
     }
-    std::cout << "Landed!\n";
+    std::cout << "\n";
+    std::cout << "Landing completed!\n";
 
     // We are relying on auto-disarming but let's keep watching the telemetry for a bit longer.
-    sleep_for(seconds(3));
-    std::cout << "Finished...\n";
-
+    sleep_for(seconds(5));
+    std::cout << "Mission finished....\n";
+    
+    return 0;
 }
 
-Mission::MissionPlan prepare_mission(Info::Identification id) {
-    //! TODO: 
+int AMDP_Server::amdp_protocol()
+{
+
+    return 0;
+}
+
+mavsdk::Mission::MissionPlan AMDP_Server::prepare_mission(mavsdk::Info::Identification id) const
+{
+    //! TODO:
     
 }
 
-bool check_drone_identification(Info::Identification id) {
-    //TODO: Future version. For now, return always true.
+bool AMDP_Server::check_drone_identification(mavsdk::Info::Identification id) const
+{
+    // TODO: Future version. For now, return always true.
     return true;
 }
 

@@ -42,7 +42,9 @@
 #define TIMEOUT_CONNECTION -2
 #define IDENTIFICATION_ERROR -3
 #define DRONE_NO_REGISTERED -4
-
+#define DRONE_LANDING_ERROR -5
+#define DRONE_TAKEOFF_ERROR -6
+#define DRONE_ARM_ERROR -7
 /*********************************************************************************************************/
 
 /*********************************************************************************************************/
@@ -84,14 +86,14 @@ private:
      * @param Info::Identification
      * @return Mission::MissionPlan
     */
-    Mission::MissionPlan prepare_mission(Info::Identification id) const;
+    mavsdk::Mission::MissionPlan prepare_mission(mavsdk::Info::Identification id) const;
 
     /**
      * @brief Function for checking if drone is registered
      * @param Info::Identification
      * @return bool
     */
-    bool check_drone_identification(Info::Identification id) const;
+    bool check_drone_identification(mavsdk::Info::Identification id) const;
     //TODO: implement--------------------------------------------
 public:
     // Constructors
@@ -109,7 +111,7 @@ public:
     //std::string get_message_string(const MessageType m) const; 
 
     //void treat_message(std::vector<std::string> &msg) const; //TODO
-    void start();
+    int start();
 
     /*void check_new_connection();*/
 };

@@ -46,7 +46,7 @@ Mission::MissionItem make_mission_item(
     return new_item;
 }
 
-int main(int argc, char **argv)
+int mai(int argc, char **argv)
 {
 
     mavsdk::Mavsdk mavsdkTester{
