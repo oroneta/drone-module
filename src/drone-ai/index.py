@@ -52,10 +52,12 @@ app = Flask(__name__)
 
 @app.route('/<dic>', methods=['POST'])
 def postCamera(dic: str) -> None:
-    auth_header = request.headers.get('Authorization').split(' ')[-1]
-    if not auth_header:
+    auth_header = request.headers.get('Authorization')
+    if auth_header:
+        auth_header = auth_header.split(' ')[-1]
+    else:
         # If client (Drone) does not send an Authorization header, return 401
-        abort(401)  # Unauthorized
+        abort(401) # Unauthorized
 
     # Check if exists the drone in the database
     if not db.getDrone(dic, auth_header):
@@ -82,11 +84,10 @@ def postCamera(dic: str) -> None:
     if status:
         image_id = db.insertUpdateAlarm(dic, auth_header, processed_image_path)
         logging.debug(f'Image {image_id} has a fire')
+        return '', 200 # OK with alarm
 
 
-
-    return '', 204  # No Content
-
+    return '', 204 # No Content
 
 
 if __name__ == '__main__':
