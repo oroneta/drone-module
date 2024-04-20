@@ -84,10 +84,10 @@ def postCamera(dic: str) -> None:
     if status:
         image_id = db.insertUpdateAlarm(dic, auth_header, processed_image_path)
         logging.debug(f'Image {image_id} has a fire')
-        return 'Success with alarm', 200
+        return '', 200 # OK with alarm
 
 
-    return 'Success without alarm', 201
+    return '', 204 # No Content
 
 
 if __name__ == '__main__':
