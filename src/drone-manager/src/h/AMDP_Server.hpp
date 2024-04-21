@@ -45,6 +45,8 @@
 #define DRONE_LANDING_ERROR -5
 #define DRONE_TAKEOFF_ERROR -6
 #define DRONE_ARM_ERROR -7
+#define DRONE_MISSION_UPLOAD_ERROR -8
+#define DRONE_MISSION_START_FAILED -9
 /*********************************************************************************************************/
 
 /*********************************************************************************************************/
@@ -88,12 +90,16 @@ private:
     */
     mavsdk::Mission::MissionPlan prepare_mission(mavsdk::Info::Identification id) const;
 
+    mavsdk::Mission::MissionPlan takeOff_land_mission(mavsdk::Telemetry::Position pos) const;
+
     /**
      * @brief Function for checking if drone is registered
      * @param Info::Identification
      * @return bool
     */
     bool check_drone_identification(mavsdk::Info::Identification id) const;
+
+
     //TODO: implement--------------------------------------------
 public:
     // Constructors

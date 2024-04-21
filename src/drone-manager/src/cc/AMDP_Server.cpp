@@ -30,7 +30,7 @@ int AMDP_Server::get_socket_with_client() const
 
 int AMDP_Server::start()
 {
-
+    //AMDP DEFAULT PORT 60002
     /*ConnectionResult res = mavsdk->add_udp_connection(DRONE_MANAGER_PORT, ForwardingOption::ForwardingOff); // atoi(getenv("MANAGER_PORT"))
     if (res != ConnectionResult::Success)
     {
@@ -38,6 +38,7 @@ int AMDP_Server::start()
         return CONNECTION_FAILED;
     }*/
 
+    //USING MAVLINK DEFAULT PORT
     ConnectionResult res = mavsdk->add_udp_connection(14540, ForwardingOption::ForwardingOff); //
     if (res != ConnectionResult::Success)
     {
@@ -70,7 +71,7 @@ int AMDP_Server::start()
 
     std::cout << "Drone ID: " << id.second.hardware_uid << std::endl;
 
-    auto plan = prepare_mission(id.second); // get the mission path from database base on the drone ID
+    // auto plan = prepare_mission(id.second); // get the mission path from database base on the drone ID
 
     auto action = Action{system.value()};
     auto mission = Mission{system.value()};
@@ -101,11 +102,20 @@ int AMDP_Server::start()
 
     std::cout << "Arming drone\n";
     const Action::Result actionRes = action.arm();
-    if(actionRes != Action::Result::Success) {
+    if (actionRes != Action::Result::Success)
+    {
         std::cerr << "Arming drone failed" << std::endl;
         return DRONE_ARM_ERROR;
     }
+    std::cout << "Drone armed successfully\n";
 
+    std::atomic<bool> want_to_pause{false};
+
+    mission.subscribe_mission_progress([&want_to_pause](Mission::MissionProgress mission_progress)
+                                       { std::cout << "Mission status update: " << mission_progress.current << " / "
+                                                   << mission_progress.total << '\n'; });
+
+    action.set_takeoff_altitude(2.0f);
     // Take off
     std::cout << "Takeoff order!\n";
     const Action::Result takeoff_result = action.takeoff();
@@ -114,8 +124,28 @@ int AMDP_Server::start()
         std::cerr << "Takeoff failed: " << takeoff_result << '\n';
         return DRONE_TAKEOFF_ERROR;
     }
-    // Let it hover for a bit before landing again.
-    sleep_for(seconds(20));
+
+    auto plan = takeOff_land_mission(telemetry.position());
+    Mission::Result missionRes = mission.upload_mission(plan);
+    if (missionRes != Mission::Result::Success)
+    {
+        std::cerr << "Failed to upload mission" << std::endl;
+        return DRONE_MISSION_UPLOAD_ERROR;
+    }
+
+    if (mission.start_mission() != Mission::Result::Success)
+    {
+        std::cerr << "Failed to start mission" << std::endl;
+        return DRONE_MISSION_START_FAILED;
+    }
+
+    do
+    {
+
+        // Let it hover for a bit before landing again.
+        sleep_for(seconds(20));
+
+    } while (!mission.is_mission_finished().second);
 
     std::cout << "Landing...\n";
     const Action::Result land_result = action.land();
@@ -137,8 +167,13 @@ int AMDP_Server::start()
 
     // We are relying on auto-disarming but let's keep watching the telemetry for a bit longer.
     sleep_for(seconds(5));
+
     std::cout << "Mission finished....\n";
-    
+    while (telemetry.armed())
+    {
+        sleep_for(seconds(2));
+    }
+
     return 0;
 }
 
@@ -151,7 +186,19 @@ int AMDP_Server::amdp_protocol()
 mavsdk::Mission::MissionPlan AMDP_Server::prepare_mission(mavsdk::Info::Identification id) const
 {
     //! TODO:
-    
+}
+
+mavsdk::Mission::MissionPlan AMDP_Server::takeOff_land_mission(mavsdk::Telemetry::Position pos) const
+{
+    Mission::MissionPlan plan;
+
+    Mission::MissionItem item1;
+    item1.relative_altitude_m = 2.0f;
+    item1.latitude_deg = pos.latitude_deg + 3.0;
+    item1.longitude_deg = pos.longitude_deg + 3.0;
+    plan.mission_items.push_back(item1);
+
+    return plan;
 }
 
 bool AMDP_Server::check_drone_identification(mavsdk::Info::Identification id) const
