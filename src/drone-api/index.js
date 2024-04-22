@@ -57,7 +57,10 @@ const app = express();
     * CHECKAUTH
 */
 app.use(express.json());
+
 app.use(cors());
+app.options('*', cors())
+
 app.use(routes);
 
 
