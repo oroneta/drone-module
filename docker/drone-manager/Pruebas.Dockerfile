@@ -1,25 +1,30 @@
 FROM mongodb/mongo-cxx-driver:3.9.0-redhat-ubi-9.3 as builder
 
 WORKDIR /opt/oronetaBuilder
-RUN microdnf upgrade -y && microdnf install -y g++ gcc  make cmake git pkg-config
+RUN microdnf -y install yum
+RUN yum upgrade -y && yum install -y g++ gcc  make cmake git pkg-config
 #RUN microdnf -y install curl
-RUN microdnf -y install yum rpm wget tar dnf python3 python3-pip openssl perl
+RUN yum -y install rpm wget tar python3 python3-devel python3-pip openssl perl bzip2
+RUN yum -y install libquadmath-devel openssl-devel
 
+#install boost
+RUN curl -OL https://boostorg.jfrog.io/artifactory/main/release/1.85.0/source/boost_1_85_0.tar.bz2
+RUN tar --bzip2 -xf boost_1_85_0.tar.bz2
+RUN rm -f boost_1_85_0.tar.bz2
+WORKDIR /opt/oronetaBuilder/boost_1_85_0
+RUN ./bootstrap.sh
+RUN ./b2 install
+
+# Set library path
+ENV LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
+
+WORKDIR /opt/oronetaBuilder
 #RUN dnf -y group install "Development Tools" "Development Libraries"
 RUN git clone https://github.com/mavlink/MAVSDK.git --recursive
 WORKDIR /opt/oronetaBuilder/MAVSDK
-#RUN wget https://github.com/mavlink/MAVSDK/archive/refs/tags/v2.5.1.tar.gz
-#RUN tar -xvf v2.5.1.tar.gz
-#WORKDIR /opt/oronetaBuilder/MAVSDK-v2.5.1
-#RUN git submodule update --init --recursive
-RUN cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF -DBUILD_MAVSDK_SERVER=ON -Bbuild/default -H. 
+RUN cmake -Bbuild/default -DCMAKE_BUILD_TYPE=Release -H.
 RUN cmake --build build/default -j8
 RUN cmake --build build/default --target install
-
-#TODO: JSONCPP NO INSTALADO
-#RUN microdnf download -y epel-release
-#RUN microdnf install -y 
-#RUN yum install -y jsoncpp-devel
 
 # Esto de aqui abajo es de ejemplo -------
 WORKDIR /opt/oronetaBuilder

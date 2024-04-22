@@ -2,9 +2,9 @@ CXX		  := g++
 CXX_FLAGS := -Wall -Wextra -std=c++17 -ggdb
 
 BIN_DIR := ../bin
-SRC_DIR := ../src/cc
+SRC_DIR := ./cc
 BUILD_DIR := .
-HEAD_DIR := ../src/h
+HEAD_DIR := ./h
 
 SRC_FILES := $(shell find $(SRC_DIR) -name '*.cpp')
 OBJ_FILES := $(SRC_FILES:%=$(BUILD_DIR)/%.o)
