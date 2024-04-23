@@ -41,7 +41,7 @@ using std::vector;
 
 using namespace mavsdk;
 
-char *server_ip = "mongodb://localhost:27017"; // TODO: Harcoded
+const char *server_ip = "mongodb://localhost:27017"; // TODO: Harcoded
 
 int main(int argc, char **argv)
 {
