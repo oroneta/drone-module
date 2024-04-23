@@ -16,13 +16,6 @@ services:
         volumes:
             - oroneta.drone-module.drone-api:/opt/drone-api/logs
         # network_mode: "host"
-
-    # drone-manager:
-    #     build:
-    #         context: .
-    #         dockerfile: drone-manager.Dockerfile
-    #     ports:
-    #         - "80002:80002"
     
     oroneta.drone-module.drone-manager:
         build:

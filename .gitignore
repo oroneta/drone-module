@@ -11,3 +11,6 @@ log
 
 tmp
 __pycache__
+
+bin/
+build/
