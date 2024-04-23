@@ -16,7 +16,7 @@ def logRotate(path: str, filename: str, max_size: int, max_days: int) -> None:
 
     # if file not exist
     if not os.path.isfile(log_file):
-        open(log_file, 'a').close()
+        open(log_file, 'w+').close()
         return None
 
     # Get log file size
@@ -37,5 +37,5 @@ def logRotate(path: str, filename: str, max_size: int, max_days: int) -> None:
         # If log file size is greater than max_size, rotate log files with date
         os.rename(log_file, f'{log_file}.{time.strftime("%Y%m%d")}')
         # And create a new log file
-        open(log_file, 'a').close()
+        open(log_file, 'w+').close()
     return None

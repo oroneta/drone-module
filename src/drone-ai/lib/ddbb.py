@@ -4,6 +4,7 @@ import pymongo, time
 # ../model/Images.py
 
 from .model.Images import ImageModel
+import logging
 
 class DDBB:
     def __init__(self, user, pasw, host, port, db):
@@ -26,8 +27,19 @@ class DDBB:
 
         Return all drones from database
     '''
-    def getAllDrones(self):
+    def getAllDrones(self) -> list:
         return self.db['drones'].find({})
+    
+    '''
+        Get drone from database
+        @param dic: str
+        @param auth: str
+        @return dict
+
+        Return drone from database
+    '''
+    def getDrone(self, dic: str, auth_code: str) -> dict:
+        return self.db['drones'].find_one({"dic": dic, "auth_code": auth_code})
     
     '''
         Insert image to database
@@ -36,7 +48,7 @@ class DDBB:
 
         Insert image to database and return the id
     '''
-    def insertImage(self, image_path):
+    def insertImage(self, image_path: str) -> str:
         with open(image_path, "rb") as image_file:
             binary_image = image_file.read()
             imageInstance = ImageModel(binary_image)
@@ -54,7 +66,7 @@ class DDBB:
 
         Update drone alarm
     '''
-    def updateDroneAlarm(self, drone_dic, drone_auth, image_id):
+    def updateDroneAlarm(self, drone_dic: str, auth_code: str, image_id: str) -> None:
         '''
             Original:
             Update drone alarm
@@ -66,9 +78,11 @@ class DDBB:
                 "alarm_data": str
             }
         '''
+        logging.debug(f'Updating drone alarm {drone_dic} {image_id}')
+        
         # Update drone alarm
         self.db['drones'].update_one(
-            {"dic": drone_dic, "auth_code": drone_auth},
+            {"dic": drone_dic, "auth_code": auth_code},
             {"$set": {
                 "alarm_status": 1,
                 "alarm_code": 0,
@@ -81,6 +95,7 @@ class DDBB:
 
     # -------- Useful functions --------
         
-    def insertUpdateAlarm(self, drone_dic, drone_auth, image_path):
+    def insertUpdateAlarm(self, drone_dic: str, auth_code: str, image_path: str) -> str:
         idImage = self.insertImage(image_path)
-        self.updateDroneAlarm(drone_dic, drone_auth, idImage)
+        self.updateDroneAlarm(drone_dic, auth_code, idImage)
+        return idImage

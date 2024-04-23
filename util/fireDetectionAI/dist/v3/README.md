@@ -1,0 +1,1 @@
+The most accurated with smoke pictures, but cannot detect the fire if there are smoke.
