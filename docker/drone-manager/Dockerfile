@@ -41,7 +41,7 @@ COPY --from=builder /opt/oronetaBuilder/bin ./bin
 COPY ./src/drone-manager/static/ .
 
 # Install dependencies mongocxx
-RUN ./script/installMongoCxx.sh
+#RUN ./script/installMongoCxx.sh
 
 
 

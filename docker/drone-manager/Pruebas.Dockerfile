@@ -7,6 +7,8 @@ RUN yum upgrade -y && yum install -y g++ gcc  make cmake git pkg-config
 RUN yum -y install rpm wget tar python3 python3-devel python3-pip openssl perl bzip2
 RUN yum -y install libquadmath-devel openssl-devel
 
+RUN microdnf -y debuginfo-install glibc-2.34-83.el9_3.12.x86_64 libgcc-11.4.1-2.1.el9.x86_64 libstdc++-11.4.1-2.1.el9.x86_64 openssl-libs-3.0.7-25.el9_3.x86_64 zlib-1.2.11-40.el9.x86_64
+RUN yum -y install gdb
 #install boost
 RUN curl -OL https://boostorg.jfrog.io/artifactory/main/release/1.85.0/source/boost_1_85_0.tar.bz2
 RUN tar --bzip2 -xf boost_1_85_0.tar.bz2
@@ -34,3 +36,10 @@ RUN echo "Holaaaa" > ./bin/test.log
 RUN mkdir -p ./build
 ADD ./src/drone-manager/build/Makefile ./build/
 ADD ./src/drone-manager/src ./build/
+
+WORKDIR /opt/oronetaBuilder/build
+RUN make
+EXPOSE 14540
+EXPOSE 60002
+WORKDIR /opt/oronetaBuilder/bin
+#ENTRYPOINT [ "/opt/oronetaBuilder/bin/drone_manager" ]
