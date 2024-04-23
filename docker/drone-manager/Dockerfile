@@ -18,7 +18,6 @@ RUN cmake --build build/default --target install
 WORKDIR /opt/oronetaBuilder
 # Esto de aqui abajo es de ejemplo -------
 RUN mkdir -p ./build
-ADD ./src/drone-manager/build/Makefile ./build/
 ADD ./src/drone-manager/src ./build/
 
 # Copias lo que necesites

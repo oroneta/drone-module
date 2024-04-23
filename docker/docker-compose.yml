@@ -20,7 +20,7 @@ services:
     oroneta.drone-module.drone-manager:
         build:
             context: ..
-            dockerfile: ./docker/drone-manager/Dockerfile
+            dockerfile: ./docker/drone-manager/Pruebas.Dockerfile
         container_name: oroneta.drone-module.drone-manager
         env_file:
             - .env
@@ -89,5 +89,7 @@ volumes:
         name: oroneta.drone-module.drone-api
     oroneta.drone-module.drone-ai:
         name: oroneta.drone-module.drone-ai
+    oroneta.drone-module.drone-manager:
+        name: oroneta.drone-module.drone-manager
     oroneta.drone-module.drone-mongo:
         name: oroneta.drone-module.drone-mongo
