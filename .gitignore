@@ -8,6 +8,7 @@ log
 *.zip
 *.gz
 *.olog
+*.o
 
 tmp
 __pycache__

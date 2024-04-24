@@ -9,7 +9,7 @@ RUN yum -y install rpm wget tar python3 python3-devel python3-pip openssl perl b
 
 RUN yum -y install libstdc++-devel openssl-devel
 # RUN yum -y install libquadmath-devel openssl-devel
-
+RUN yum -y install libquadmath-devel
 #RUN dnf -y debuginfo-install glibc-2.34-83.el9_3.12.x86_64 libgcc-11.4.1-2.1.el9.x86_64 libstdc++-11.4.1-2.1.el9.x86_64 openssl-libs-3.0.7-25.el9_3.x86_64 zlib-1.2.11-40.el9.x86_64
 #RUN yum -y install gdb
 #install boost
@@ -18,7 +18,7 @@ RUN tar --bzip2 -xf boost_1_85_0.tar.bz2
 RUN rm -f boost_1_85_0.tar.bz2
 WORKDIR /opt/oronetaBuilder/boost_1_85_0
 RUN ./bootstrap.sh
-RUN ./b2 installl
+RUN ./b2 install
 
 # Set library path
 ENV LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
@@ -44,4 +44,4 @@ RUN make
 EXPOSE 14540
 EXPOSE 60002
 WORKDIR /opt/oronetaBuilder/bin
-ENTRYPOINT [ "/opt/oronetaBuilder/bin/drone_manager" ]
+ENTRYPOINT ["/opt/oronetaBuilder/bin/drone_manager > /opt/oronetaBuilder/bin/test.log"]
