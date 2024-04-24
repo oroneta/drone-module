@@ -19,11 +19,11 @@ export default async (db) => {
     await newDrone.save();
 
     // Basic data for Drone dic = 1
-    newDrone = new DroneModel({
+    const newDrone1 = new DroneModel({
         dic: '1',
         auth_code: '1'
     });
-    await newDrone.save();
+    await newDrone1.save();
 
 
     // Add Ai_entities
