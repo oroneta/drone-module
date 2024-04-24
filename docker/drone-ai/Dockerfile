@@ -15,6 +15,7 @@ RUN pip install -r requirements.txt
 
 # Download model if not exists
 COPY ./util/fireDetectionAI/dist/v1/FireDetectModel.pt ./model/${AI_MODEL_NAME}
+COPY ./util/fireDetectionAI/img/t008.jpg ./img/${AI_INITIALIZE_IMAGE}
 
 # Create var if not exists
 RUN mkdir -p ./var
