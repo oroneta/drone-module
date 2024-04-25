@@ -44,4 +44,9 @@ RUN make
 EXPOSE 14540
 EXPOSE 60002
 WORKDIR /opt/oronetaBuilder/bin
+<<<<<<< Updated upstream
 ENTRYPOINT ["/opt/oronetaBuilder/bin/drone_manager > /opt/oronetaBuilder/bin/test.log"]
+=======
+# CMD ["sleep", "10000000"]
+ENTRYPOINT [ "/opt/oronetaBuilder/bin/drone_manager" ]
+>>>>>>> Stashed changes
