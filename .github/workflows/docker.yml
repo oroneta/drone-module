@@ -1,0 +1,42 @@
+name: Docker/Podman CI
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  run:
+
+    runs-on: ubuntu-latest
+
+    services:
+      docker:
+        image: docker:dind
+        options: --privileged=true
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Install build dependencies
+      run: |
+        sudo apt update
+        sudo apt install -y python3
+
+    - name: Check docker and podman
+      run: |
+        docker --version
+        podman --version
+
+    - name: Set up Docker
+      run: |
+        cd ./docker
+        docker compose up -d --build
+
+        if [ $( docker ps -q | wc -l ) -lt 4 ]
+        then
+          echo "Test failed, docker not alive"
+          exit 1
+        fi
