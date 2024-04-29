@@ -33,7 +33,7 @@ int AMDP_Server::start()
     //AMDP DEFAULT PORT 60002
     /*ConnectionResult res = mavsdk->add_udp_connection(DRONE_MANAGER_PORT, ForwardingOption::ForwardingOff); // atoi(getenv("MANAGER_PORT"))
     if (res != ConnectionResult::Success)
-    {
+    4
         std::cerr << "Connection errors: " << res << std::endl;
         return CONNECTION_FAILED;
     }*/

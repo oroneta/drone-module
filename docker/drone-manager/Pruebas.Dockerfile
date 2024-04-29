@@ -8,8 +8,8 @@ RUN yum upgrade -y && yum install -y g++ gcc  make cmake git pkg-config
 RUN yum -y install rpm wget tar python3 python3-devel python3-pip openssl perl bzip2
 
 RUN yum -y install libstdc++-devel openssl-devel
-RUN yum -y install libquadmath-devel openssl-devel
-
+# RUN yum -y install libquadmath-devel openssl-devel
+RUN yum -y install libquadmath-devel
 #RUN dnf -y debuginfo-install glibc-2.34-83.el9_3.12.x86_64 libgcc-11.4.1-2.1.el9.x86_64 libstdc++-11.4.1-2.1.el9.x86_64 openssl-libs-3.0.7-25.el9_3.x86_64 zlib-1.2.11-40.el9.x86_64
 #RUN yum -y install gdb
 #install boost
@@ -44,4 +44,5 @@ RUN make
 EXPOSE 14540
 EXPOSE 60002
 WORKDIR /opt/oronetaBuilder/bin
+# CMD ["sleep", "10000000"]
 ENTRYPOINT [ "/opt/oronetaBuilder/bin/drone_manager" ]

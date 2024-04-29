@@ -9,13 +9,13 @@ services:
         env_file:
             - .env
         # restart: unless-stopped
-        ports:
-            - "60001:60001"
+        # ports:
+        #     - "60001:60001"
         depends_on:
             - oroneta.drone-module.drone-mongo
         volumes:
             - oroneta.drone-module.drone-api:/opt/drone-api/logs
-        # network_mode: "host"
+        #network_mode: "host"
     
     oroneta.drone-module.drone-manager:
         build:
@@ -26,30 +26,30 @@ services:
             - .env
         # restart: unless-stopped
         ports:
-            - "60002:60002"
-            - "4560:4560"
+            - "60002:60002/udp"
+            - "14540:14540/udp"
         depends_on:
             - oroneta.drone-module.drone-mongo
             # - oroneta.drone-module.drone-api
         volumes:
             - oroneta.drone-module.drone-manager:/opt/drone-manager/var
-        # network_mode: "host"
+        #network_mode: "host"
 
-    # oroneta.drone-module.drone-ai:
-    #     build:
-    #         context: ..
-    #         dockerfile: ./docker/drone-ai/Dockerfile
-    #     container_name: oroneta.drone-module.drone-ai
-    #     # restart: unless-stopped
-    #     env_file:
-    #         - .env
-    #     ports:
-    #         - "60003:60003"
-    #     volumes:
-    #         - oroneta.drone-module.drone-ai:/opt/drone-ai/var
-    #     depends_on:
-    #         - oroneta.drone-module.drone-mongo
-    #     # network_mode: "host"
+    oroneta.drone-module.drone-ai:
+        build:
+            context: ..
+            dockerfile: ./docker/drone-ai/Dockerfile
+        container_name: oroneta.drone-module.drone-ai
+        # restart: unless-stopped
+        env_file:
+            - .env
+        # ports:
+        #     - "60003:60003"
+        volumes:
+            - oroneta.drone-module.drone-ai:/opt/drone-ai/var
+        depends_on:
+            - oroneta.drone-module.drone-mongo
+    #     network_mode: "host"
 
     oroneta.drone-module.drone-mongo:
         image: mongo:4.4.6
@@ -65,7 +65,7 @@ services:
         volumes:
             - oroneta.drone-module.drone-mongo:/data/db/
             - /etc/timezone:/etc/timezone:ro
-        # network_mode: "host"
+        #network_mode: "host"
 
 
     oroneta.drone-module.drone-mongo-express:
@@ -82,7 +82,7 @@ services:
             ME_CONFIG_MONGODB_ADMINUSERNAME: ${MONGO_DBUSER}
             ME_CONFIG_MONGODB_ADMINPASSWORD: ${MONGO_DBPASS}
             ME_CONFIG_MONGODB_URL: mongodb://${MONGO_DBUSER}:${MONGO_DBPASS}@${MONGO_DBSEVR}:${MONGO_DBPORT}/?authMechanism=DEFAULT
-        # network_mode: "host"
+        #network_mode: "host"
 
     
 volumes:
