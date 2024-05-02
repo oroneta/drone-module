@@ -88,9 +88,19 @@ private:
      * @param Info::Identification
      * @return Mission::MissionPlan
     */
-    mavsdk::Mission::MissionPlan prepare_mission(mavsdk::Info::Identification id) const;
+    std::vector<mavsdk::Mission::MissionItem> prepare_mission() const;
 
     mavsdk::Mission::MissionPlan takeOff_land_mission(mavsdk::Telemetry::Position pos) const;
+
+    mavsdk::Mission::MissionItem make_mission_item2(
+    double latitude_deg,
+    double longitude_deg,
+    float relative_altitude_m,
+    float speed_m_s,
+    bool is_fly_through,
+    float gimbal_pitch_deg,
+    float gimbal_yaw_deg,
+    mavsdk::Mission::MissionItem::CameraAction camera_action) const;
 
     /**
      * @brief Function for checking if drone is registered

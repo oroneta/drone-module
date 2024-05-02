@@ -71,8 +71,6 @@ int AMDP_Server::start()
 
     std::cout << "Drone ID: " << id.second.hardware_uid << std::endl;
 
-    // auto plan = prepare_mission(id.second); // get the mission path from database base on the drone ID
-
     auto action = Action{system.value()};
     auto mission = Mission{system.value()};
     auto telemetry = Telemetry{system.value()};
@@ -94,85 +92,81 @@ int AMDP_Server::start()
     telemetry.subscribe_heading([](Telemetry::Heading heading)
                                 { std::cout << "Heading: " << heading.heading_deg << " deg\n"; });
 
-    while (!telemetry.health_all_ok())
-    {
+     while (!telemetry.health_all_ok()) {
         std::cout << "Waiting for system to be ready\n";
-        sleep_for(std::chrono::seconds(2));
-    }
-
-    std::cout << "Arming drone\n";
-    const Action::Result actionRes = action.arm();
-    if (actionRes != Action::Result::Success)
-    {
-        std::cerr << "Arming drone failed" << std::endl;
-        return DRONE_ARM_ERROR;
-    }
-    std::cout << "Drone armed successfully\n";
-
-    std::atomic<bool> want_to_pause{false};
-
-    mission.subscribe_mission_progress([&want_to_pause](Mission::MissionProgress mission_progress)
-                                       { std::cout << "Mission status update: " << mission_progress.current << " / "
-                                                   << mission_progress.total << '\n'; });
-
-    action.set_takeoff_altitude(2.0f);
-    // Take off
-    std::cout << "Takeoff order!\n";
-    const Action::Result takeoff_result = action.takeoff();
-    if (takeoff_result != Action::Result::Success)
-    {
-        std::cerr << "Takeoff failed: " << takeoff_result << '\n';
-        return DRONE_TAKEOFF_ERROR;
-    }
-
-    auto plan = takeOff_land_mission(telemetry.position());
-    Mission::Result missionRes = mission.upload_mission(plan);
-    if (missionRes != Mission::Result::Success)
-    {
-        std::cerr << "Failed to upload mission" << std::endl;
-        return DRONE_MISSION_UPLOAD_ERROR;
-    }
-
-    if (mission.start_mission() != Mission::Result::Success)
-    {
-        std::cerr << "Failed to start mission" << std::endl;
-        return DRONE_MISSION_START_FAILED;
-    }
-
-    do
-    {
-
-        // Let it hover for a bit before landing again.
-        sleep_for(seconds(20));
-
-    } while (!mission.is_mission_finished().second);
-
-    std::cout << "Landing...\n";
-    const Action::Result land_result = action.land();
-    if (land_result != Action::Result::Success)
-    {
-        std::cerr << "Land failed: " << land_result << '\n';
-        return DRONE_LANDING_ERROR;
-    }
-
-    // Check if vehicle is still in air
-    std::cout << "landing...";
-    while (telemetry.in_air())
-    {
-        std::cout << ".";
         sleep_for(seconds(1));
     }
-    std::cout << "\n";
-    std::cout << "Landing completed!\n";
 
-    // We are relying on auto-disarming but let's keep watching the telemetry for a bit longer.
-    sleep_for(seconds(5));
+    std::cout << "System ready\n";
+    std::cout << "Creating and uploading mission\n";
 
-    std::cout << "Mission finished....\n";
-    while (telemetry.armed())
-    {
-        sleep_for(seconds(2));
+
+    std::vector<Mission::MissionItem> mission_items = prepare_mission();
+
+    std::cout << "Uploading mission...\n";
+    Mission::MissionPlan mission_plan{};
+    mission_plan.mission_items = mission_items;
+    const Mission::Result upload_result = mission.upload_mission(mission_plan);
+
+    if (upload_result != Mission::Result::Success) {
+        std::cerr << "Mission upload failed: " << upload_result << ", exiting.\n";
+        return 1;
     }
+
+    std::cout << "Arming...\n";
+    const Action::Result arm_result = action.arm();
+    if (arm_result != Action::Result::Success) {
+        std::cerr << "Arming failed: " << arm_result << '\n';
+        return 1;
+    }
+    std::cout << "Armed.\n";
+
+    std::atomic<bool> want_to_pause{false};
+    // Before starting the mission, we want to be sure to subscribe to the mission progress.
+    mission.subscribe_mission_progress([&want_to_pause](Mission::MissionProgress mission_progress) {
+        std::cout << "Mission status update: " << mission_progress.current << " / "
+                  << mission_progress.total << '\n';
+
+        if (mission_progress.current >= 2) {
+            // We can only set a flag here. If we do more request inside the callback,
+            // we risk blocking the system.
+            want_to_pause = true;
+        }
+    });
+
+    Mission::Result start_mission_result = mission.start_mission();
+    if (start_mission_result != Mission::Result::Success) {
+        std::cerr << "Starting mission failed: " << start_mission_result << '\n';
+        return 1;
+    }
+
+    while (!want_to_pause) {
+        sleep_for(seconds(1));
+    }
+
+    sleep_for(seconds(20));
+
+    while (!mission.is_mission_finished().second) {
+        sleep_for(seconds(1));
+    }
+
+    // We are done, and can do RTL to go home.
+    std::cout << "Commanding RTL...\n";
+    const Action::Result rtl_result = action.return_to_launch();
+    if (rtl_result != Action::Result::Success) {
+        std::cout << "Failed to command RTL: " << rtl_result << '\n';
+        return 1;
+    }
+    std::cout << "Commanded RTL.\n";
+
+    // We need to wait a bit, otherwise the armed state might not be correct yet.
+    sleep_for(seconds(2));
+
+    while (telemetry.armed()) {
+        // Wait until we're done.
+        sleep_for(seconds(1));
+    }
+    std::cout << "Disarmed, exiting.\n";
 
     return 0;
 }
@@ -183,9 +177,94 @@ int AMDP_Server::amdp_protocol()
     return 0;
 }
 
-mavsdk::Mission::MissionPlan AMDP_Server::prepare_mission(mavsdk::Info::Identification id) const
+std::vector<mavsdk::Mission::MissionItem> AMDP_Server::prepare_mission() const
 {
-    //! TODO:
+    std::vector<mavsdk::Mission::MissionItem> mission_items;
+
+     mission_items.push_back(make_mission_item2(
+        47.398170327054473,
+        8.5456490218639658,
+        10.0f,
+        5.0f,
+        false,
+        20.0f,
+        60.0f,
+        Mission::MissionItem::CameraAction::None));
+
+    mission_items.push_back(make_mission_item2(
+        47.398241338125118,
+        8.5455360114574432,
+        10.0f,
+        2.0f,
+        true,
+        0.0f,
+        -60.0f,
+        Mission::MissionItem::CameraAction::TakePhoto));
+
+    mission_items.push_back(make_mission_item2(
+        47.398139363821485,
+        8.5453846156597137,
+        10.0f,
+        5.0f,
+        true,
+        -45.0f,
+        0.0f,
+        Mission::MissionItem::CameraAction::StartVideo));
+
+    mission_items.push_back(make_mission_item2(
+        47.398058617228855,
+        8.5454618036746979,
+        10.0f,
+        2.0f,
+        false,
+        -90.0f,
+        30.0f,
+        Mission::MissionItem::CameraAction::StopVideo));
+
+    mission_items.push_back(make_mission_item2(
+        47.398100366082858,
+        8.5456969141960144,
+        10.0f,
+        5.0f,
+        false,
+        -45.0f,
+        -30.0f,
+        Mission::MissionItem::CameraAction::StartPhotoInterval));
+
+    mission_items.push_back(make_mission_item2(
+        47.398001890458097,
+        8.5455576181411743,
+        10.0f,
+        5.0f,
+        false,
+        0.0f,
+        0.0f,
+        Mission::MissionItem::CameraAction::StopPhotoInterval));
+
+    return mission_items;
+
+}
+
+mavsdk::Mission::MissionItem AMDP_Server::make_mission_item2(
+    double latitude_deg,
+    double longitude_deg,
+    float relative_altitude_m,
+    float speed_m_s,
+    bool is_fly_through,
+    float gimbal_pitch_deg,
+    float gimbal_yaw_deg,
+    mavsdk::Mission::MissionItem::CameraAction camera_action) const
+{
+    mavsdk::Mission::MissionItem new_item{};
+    new_item.latitude_deg = latitude_deg;
+    new_item.longitude_deg = longitude_deg;
+    new_item.relative_altitude_m = relative_altitude_m;
+    new_item.speed_m_s = speed_m_s;
+    new_item.is_fly_through = is_fly_through;
+    new_item.gimbal_pitch_deg = gimbal_pitch_deg;
+    new_item.gimbal_yaw_deg = gimbal_yaw_deg;
+    new_item.camera_action = camera_action;
+    return new_item;
 }
 
 mavsdk::Mission::MissionPlan AMDP_Server::takeOff_land_mission(mavsdk::Telemetry::Position pos) const
