@@ -182,64 +182,64 @@ std::vector<mavsdk::Mission::MissionItem> AMDP_Server::prepare_mission() const
     std::vector<mavsdk::Mission::MissionItem> mission_items;
 
      mission_items.push_back(make_mission_item2(
-        47.398170327054473,
-        8.5456490218639658,
-        10.0f,
+        39.4808152,
+        -0.3401091,
+        2.0f,
         5.0f,
-        false,
-        20.0f,
-        60.0f,
+        true,
+        0.0f,
+        0.0f,
         Mission::MissionItem::CameraAction::None));
 
     mission_items.push_back(make_mission_item2(
-        47.398241338125118,
-        8.5455360114574432,
-        10.0f,
+        39.4400359,
+        -0.3222084,
         2.0f,
+        15.0f,
         true,
         0.0f,
-        -60.0f,
+        0.0f,
+        Mission::MissionItem::CameraAction::None));
+
+    mission_items.push_back(make_mission_item2(
+        39.4336000,
+        -0.3123000,
+        2.0f,
+        15.0f,
+        true,
+        0.0f,
+        0.0f,
         Mission::MissionItem::CameraAction::TakePhoto));
 
     mission_items.push_back(make_mission_item2(
-        47.398139363821485,
-        8.5453846156597137,
-        10.0f,
-        5.0f,
+        39.4299000,
+        -0.3152000,
+        2.0f,
+        15.0f,
         true,
-        -45.0f,
+        0.0f,
         0.0f,
         Mission::MissionItem::CameraAction::StartVideo));
 
     mission_items.push_back(make_mission_item2(
-        47.398058617228855,
-        8.5454618036746979,
-        10.0f,
+        39.4359000,
+        -0.3301000,
         2.0f,
-        false,
-        -90.0f,
-        30.0f,
+        15.0f,
+        true,
+        0.0f,
+        0.0f,
         Mission::MissionItem::CameraAction::StopVideo));
 
     mission_items.push_back(make_mission_item2(
-        47.398100366082858,
-        8.5456969141960144,
-        10.0f,
-        5.0f,
-        false,
-        -45.0f,
-        -30.0f,
+        39.4400359,
+        -0.3222084,
+        2.0f,
+        15.0f,
+        true,
+        0.0f,
+        0.0f,
         Mission::MissionItem::CameraAction::StartPhotoInterval));
-
-    mission_items.push_back(make_mission_item2(
-        47.398001890458097,
-        8.5455576181411743,
-        10.0f,
-        5.0f,
-        false,
-        0.0f,
-        0.0f,
-        Mission::MissionItem::CameraAction::StopPhotoInterval));
 
     return mission_items;
 
