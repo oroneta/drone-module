@@ -88,7 +88,7 @@ private:
      * @param Info::Identification
      * @return Mission::MissionPlan
     */
-    std::vector<mavsdk::Mission::MissionItem> prepare_mission() const;
+    std::vector<mavsdk::Mission::MissionItem> prepare_mission(mavsdk::Telemetry::Position& pos) const;
 
     mavsdk::Mission::MissionPlan takeOff_land_mission(mavsdk::Telemetry::Position pos) const;
 

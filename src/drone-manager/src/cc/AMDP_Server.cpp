@@ -82,12 +82,16 @@ int AMDP_Server::start()
         return 1;
     }
 
-    telemetry.subscribe_position([](Telemetry::Position position)
+    mavsdk::Telemetry::Position external_position;
+
+    telemetry.subscribe_position([&external_position](Telemetry::Position position)
                                  {
         std::cout << "Altitude: " << position.relative_altitude_m << " m\n";
         //std::cout << "Absolute Altitude: " << position.absolute_altitude_m << " m\n";
         std::cout << "Latitude: " << position.latitude_deg << " deg\n";
-        std::cout << "Longitude: " << position.longitude_deg << " deg\n"; });
+        std::cout << "Longitude: " << position.longitude_deg << " deg\n"; 
+        
+        });
 
     telemetry.subscribe_heading([](Telemetry::Heading heading)
                                 { std::cout << "Heading: " << heading.heading_deg << " deg\n"; });
@@ -100,8 +104,7 @@ int AMDP_Server::start()
     std::cout << "System ready\n";
     std::cout << "Creating and uploading mission\n";
 
-
-    std::vector<Mission::MissionItem> mission_items = prepare_mission();
+    std::vector<Mission::MissionItem> mission_items = prepare_mission(external_position);
 
     std::cout << "Uploading mission...\n";
     Mission::MissionPlan mission_plan{};
@@ -144,7 +147,7 @@ int AMDP_Server::start()
         sleep_for(seconds(1));
     }
 
-    sleep_for(seconds(20));
+    //sleep_for(seconds(20));
 
     while (!mission.is_mission_finished().second) {
         sleep_for(seconds(1));
@@ -177,19 +180,60 @@ int AMDP_Server::amdp_protocol()
     return 0;
 }
 
-std::vector<mavsdk::Mission::MissionItem> AMDP_Server::prepare_mission() const
+std::vector<mavsdk::Mission::MissionItem> AMDP_Server::prepare_mission(mavsdk::Telemetry::Position& pos) const
 {
     std::vector<mavsdk::Mission::MissionItem> mission_items;
+    // // Ini position point
+    // mission_items.push_back(make_mission_item2(
+    //     pos.latitude_deg,
+    //     pos.longitude_deg,
+    //     2.0f,
+    //     15.0f,
+    //     true,
+    //     0.0f,
+    //     0.0f,
+    //     mavsdk::Mission::MissionItem::CameraAction::None));
 
-     mission_items.push_back(make_mission_item2(
-        39.4808152,
-        -0.3401091,
-        2.0f,
-        5.0f,
-        true,
-        0.0f,
-        0.0f,
-        Mission::MissionItem::CameraAction::None));
+    // // Get the MongoDB client
+    // mongocxx::client* client = mongo_client;
+
+    // // Access the database and perform a query to retrieve GPS data
+    // mongocxx::database db = (*client)["drone-module-db"];
+    // mongocxx::collection collection = db["drones"];
+    
+    // // Filter dic
+    // auto filter = bsoncxx::builder::stream::document{} << "dic" << "0" << bsoncxx::builder::stream::finalize;
+
+    // // Perform a query to retrieve GPS data
+    // mongocxx::cursor cursor = collection.find(filter.view());
+ 
+    // for (auto&& doc : cursor)
+    // {
+    //     // Access necessary fields in the document to obtain GPS coordinates
+    //     auto gps_data = doc["metadata"]["gps"];
+    //     double latitude = gps_data[0].get_double();
+    //     double longitude = gps_data[1].get_double();
+
+    //     // Add the MissionItem to the mission_items vector
+    //     mission_items.push_back(make_mission_item2(
+    //         latitude,
+    //         longitude,
+    //         2.0f,
+    //         15.0f,
+    //         true,
+    //         0.0f,
+    //         0.0f,
+    //         mavsdk::Mission::MissionItem::CameraAction::None));
+    // }
+    //  mission_items.push_back(make_mission_item2(
+    //     39.4808152,
+    //     -0.3401091,
+    //     2.0f,
+    //     5.0f,
+    //     true,
+    //     0.0f,
+    //     0.0f,
+    //     Mission::MissionItem::CameraAction::None));
 
     mission_items.push_back(make_mission_item2(
         39.4400359,
