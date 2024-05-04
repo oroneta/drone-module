@@ -16,27 +16,36 @@
 
 #define MONGO_DB_PORT 27017
 
-// Before co
+// Before cox
 namespace drone_manager
 {
     class MongoDB_Manager
     {
     public:
         MongoDB_Manager(const std::string &u);
-
         ~MongoDB_Manager() {}
+        
+        //funtions
+        void connect(const std:: string& dbName);
+        static std::string getFlightPath(mongocxx::client client, const std::string& dic);
 
         // Getters
-        mongocxx::client &get_client() const;
-        mongocxx::uri get_uri();
-        mongocxx::database &get_database(std::string db_name) const;
-        mongocxx::collection &get_collection(mongocxx::database &db, std::string coll_name) const;
-        // other methods
-        void change_uri(mongocxx::uri &u);
+        // mongocxx::client &get_client() const;
+        // mongocxx::uri get_uri();
+        // mongocxx::database &get_database(std::string db_name) const;
+        // mongocxx::collection &get_collection(mongocxx::database &db, std::string coll_name) const;
+        // // other methods
+        // void change_uri(mongocxx::uri &u);
+
+        
 
     private:
-        mongocxx::uri uri;
         mongocxx::client client;
+        mongocxx::database db;
+
+        static const std::string uri_string;
+        static const std::string db_name;
+
     };
 }
 

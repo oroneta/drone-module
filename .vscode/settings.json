@@ -66,6 +66,10 @@
         "cinttypes": "cpp",
         "typeindex": "cpp",
         "typeinfo": "cpp",
-        "variant": "cpp"
+        "variant": "cpp",
+        "charconv": "cpp",
+        "format": "cpp",
+        "future": "cpp",
+        "span": "cpp"
     }
 }

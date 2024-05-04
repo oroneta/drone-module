@@ -35,21 +35,21 @@ services:
             - oroneta.drone-module.drone-manager:/opt/drone-manager/var
         #network_mode: "host"
 
-    oroneta.drone-module.drone-ai:
-        build:
-            context: ..
-            dockerfile: ./docker/drone-ai/Dockerfile
-        container_name: oroneta.drone-module.drone-ai
-        # restart: unless-stopped
-        env_file:
-            - .env
-        # ports:
-        #     - "60003:60003"
-        volumes:
-            - oroneta.drone-module.drone-ai:/opt/drone-ai/var
-        depends_on:
-            - oroneta.drone-module.drone-mongo
-    #     network_mode: "host"
+    # oroneta.drone-module.drone-ai:
+    #     build:
+    #         context: ..
+    #         dockerfile: ./docker/drone-ai/Dockerfile
+    #     container_name: oroneta.drone-module.drone-ai
+    #     # restart: unless-stopped
+    #     env_file:
+    #         - .env
+    #     # ports:
+    #     #     - "60003:60003"
+    #     volumes:
+    #         - oroneta.drone-module.drone-ai:/opt/drone-ai/var
+    #     depends_on:
+    #         - oroneta.drone-module.drone-mongo
+    # #     network_mode: "host"
 
     oroneta.drone-module.drone-mongo:
         image: mongo:4.4.6

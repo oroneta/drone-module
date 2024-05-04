@@ -41,7 +41,7 @@ using std::vector;
 
 using namespace mavsdk;
 
-const char *server_ip = "mongodb://oroneta.drone-module.drone-mongo:27017/drone-module-db?authSource=admin"; // TODO: Harcoded
+//const char *server_ip = "mongodb://oroneta.drone-module.drone-mongo:27017/drone-module-db?authSource=admin"; // TODO: Harcoded
 
 int main(int argc, char **argv)
 {
@@ -50,16 +50,22 @@ int main(int argc, char **argv)
     // Neither client and pool are safely copied after fork, so we need to create new clients and pool after fork. More information mongocxx documentation
     // In addition, all the mongocxx objects are not safely copied after fork
     // mongocxx::uri uri("mongodb://localhost:27017"); // TODO: Hardcoded
-    string server_ip = "mongodb://oroneta.drone-module.drone-mongo:27017";
+   // string server_ip = "mongodb://oroneta.drone-module.drone-mongo:27017";
     // server_ip = server_ip + getenv("MONGO_SERVR") + ":" + getenv("MONGO_DBPORT");
-    mongocxx::client *client;
-    try
-    {
-        client = new mongocxx::client{mongocxx::uri{server_ip}};
-    }
-    catch (const std::exception &e)
-    {
-        cout << e.what() << endl;
+    // mongocxx::client *client;
+    // try
+    // {
+    //    client = new mongocxx::client{mongocxx::uri{server_ip}};
+    // }
+    // catch (const std::exception &e)
+    // {
+    //     cout << e.what() << endl;
+    // }
+    drone_manager::MongoDB_Manager dbManager;
+    try {
+        dbManager.connect(); 
+    } catch (const exception &e) {
+        cerr << "Error al conectar a la base de datos: " << e.what() << endl; 
     }
 
     Mavsdk *mavsdk = new Mavsdk{Mavsdk::Configuration{Mavsdk::ComponentType::GroundStation}};
