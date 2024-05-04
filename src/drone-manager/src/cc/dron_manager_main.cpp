@@ -50,25 +50,22 @@ int main(int argc, char **argv)
     mongocxx::instance instance{}; // Only once, don't invoke again. For more information, see mongocxx driver tutorial page
     // Neither client and pool are safely copied after fork, so we need to create new clients and pool after fork. More information mongocxx documentation
     // In addition, all the mongocxx objects are not safely copied after fork
-    // mongocxx::uri uri("mongodb://localhost:27017"); // TODO: Hardcoded
-   // string server_ip = "mongodb://oroneta.drone-module.drone-mongo:27017";
-    // server_ip = server_ip + getenv("MONGO_SERVR") + ":" + getenv("MONGO_DBPORT");
-    // mongocxx::client *client;
-    // try
-    // {
-    //    client = new mongocxx::client{mongocxx::uri{server_ip}};
-    // }
-    // catch (const std::exception &e)
-    // {
-    //     cout << e.what() << endl;
-    // }
     auto client = MongoDB_Manager::connect(uri_string);
 
     Mavsdk *mavsdk = new Mavsdk{Mavsdk::Configuration{Mavsdk::ComponentType::GroundStation}};
+    // USING MAVLINK DEFAULT PORT
+    ConnectionResult res = mavsdk->add_udp_connection(14540, ForwardingOption::ForwardingOff); //
+    if (res != ConnectionResult::Success)
+    {
+        std::cerr << "Connection errors: " << res << std::endl;
+        return CONNECTION_FAILED;
+    }
 
-    AMDP_Server server(-1, &client, mavsdk);
-
-    server.start();
-
+    AMDP_Server server(client, mavsdk);
+    int start_res;
+    do
+    {
+        start_res = server.start();
+    } while (start_res != 0);
     return 0;
 }

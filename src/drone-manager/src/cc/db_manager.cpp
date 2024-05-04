@@ -7,12 +7,12 @@ using std::string;
 
 using namespace drone_manager;
 
-mongocxx::client MongoDB_Manager::connect(const std::string &uri)
+std::shared_ptr<mongocxx::client> MongoDB_Manager::connect(const std::string &uri)
 {
-    mongocxx::client client;
+    std::shared_ptr<mongocxx::client> client;
     try
     {
-        client = mongocxx::client{mongocxx::uri{uri}};
+        client = std::shared_ptr<mongocxx::client>(new mongocxx::client{mongocxx::uri{uri}});
         std::cout << "Connected successfully to database: " << db_name << std::endl;
     }
     catch (const std::exception &e)

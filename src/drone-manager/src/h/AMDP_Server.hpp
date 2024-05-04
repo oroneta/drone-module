@@ -47,6 +47,8 @@
 #define DRONE_ARM_ERROR -7
 #define DRONE_MISSION_UPLOAD_ERROR -8
 #define DRONE_MISSION_START_FAILED -9
+#define NO_MISSION_FOR_DRONE -10
+#define MISSION_APLOAD_FAILED -11
 /*********************************************************************************************************/
 
 /*********************************************************************************************************/
@@ -55,79 +57,57 @@
 class AMDP_Server
 {
 private:
-    int socket_with_client;
     // sockaddr_in client_address;
     std::shared_ptr<mongocxx::client> mongo_client;
 
     std::shared_ptr<mavsdk::Mavsdk> mavsdk;
 
-    //std::mutex server_mutex;
-    //TODO: implement--------------------------------------------
-    /*void handle_wake_message(std::vector<std::string> &messages);
-
-    void handle_push_message(std::vector<std::string> &messages);
-
-    void handle_receive_message(std::vector<std::string> &messages);
-
-    void handle_request_message(std::vector<std::string> &messages);
-
-    void handle_response_message(std::vector<std::string> &messages);
-
-    void handle_close_message(std::vector<std::string> &messages);
-
-    void handle_end_message(std::vector<std::string> &messages);
-
-    static float check_orientation(const drone_manager::Coordinate &coord);*/
-
+    // std::mutex server_mutex;
+    // TODO: implement--------------------------------------------
     int amdp_protocol();
-
-    //void show_drone_info() const;
 
     /**
      * @brief Function for getting routes from mongodb and prepare the mission for the drone
      * @param Info::Identification
      * @return Mission::MissionPlan
-    */
-    std::vector<mavsdk::Mission::MissionItem> prepare_mission(mavsdk::Telemetry::Position& pos) const;
+     */
+    std::vector<mavsdk::Mission::MissionItem> prepare_mission(mavsdk::Telemetry::Position &pos) const;
 
     mavsdk::Mission::MissionPlan takeOff_land_mission(mavsdk::Telemetry::Position pos) const;
 
     mavsdk::Mission::MissionItem make_mission_item2(
-    double latitude_deg,
-    double longitude_deg,
-    float relative_altitude_m,
-    float speed_m_s,
-    bool is_fly_through,
-    float gimbal_pitch_deg,
-    float gimbal_yaw_deg,
-    mavsdk::Mission::MissionItem::CameraAction camera_action) const;
+        double latitude_deg,
+        double longitude_deg,
+        float relative_altitude_m,
+        float speed_m_s,
+        bool is_fly_through,
+        float gimbal_pitch_deg,
+        float gimbal_yaw_deg,
+        mavsdk::Mission::MissionItem::CameraAction camera_action) const;
 
     /**
      * @brief Function for checking if drone is registered
      * @param Info::Identification
      * @return bool
-    */
+     */
     bool check_drone_identification(mavsdk::Info::Identification id) const;
 
-
-    //TODO: implement--------------------------------------------
+    // TODO: implement--------------------------------------------
 public:
     // Constructors
-    AMDP_Server(const int socket_fd, mongocxx::client *client, mavsdk::Mavsdk *mav);
+    AMDP_Server(std::shared_ptr<mongocxx::client> client, mavsdk::Mavsdk *mav);
     // Destructor
     ~AMDP_Server() {}
 
-    // Getters
-    int get_socket_with_client() const;
-    // Setters
-    
     // Other methods
-    //int get_message_type(const std::string &msg) const;
+    // int get_message_type(const std::string &msg) const;
 
-    //std::string get_message_string(const MessageType m) const; 
+    // std::string get_message_string(const MessageType m) const;
 
-    //void treat_message(std::vector<std::string> &msg) const; //TODO
+    // void treat_message(std::vector<std::string> &msg) const; //TODO
     int start();
+
+    void close_port_connections();
 
     /*void check_new_connection();*/
 };
