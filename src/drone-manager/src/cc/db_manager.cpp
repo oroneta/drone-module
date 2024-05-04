@@ -7,55 +7,60 @@ using std::string;
 
 using namespace drone_manager;
 
-const std::string MongoDB_Manager::uri_string = "mongodb://Oroneta_Admin:Oroneta_Password@oroneta.drone-module.drone-mongo:27017";
-const std::string MongoDB_Manager::db_name = "drone-module-db";
-
-
-MongoDB_Manager::MongoDB_Manager(const std::string &u) : uri(u)
+mongocxx::client MongoDB_Manager::connect(const std::string &uri)
 {
-}
-
-
-void MongoDB_Manager::connect() {
-    try {
-        client = mongocxx::client{mongocxx::uri{uri_string}};
-        db = client[db_name];  
-        std::cout << "Connected successfully to database: " << dbName << std::endl;
-    } catch (const std::exception &e) {
+    mongocxx::client client;
+    try
+    {
+        client = mongocxx::client{mongocxx::uri{uri}};
+        std::cout << "Connected successfully to database: " << db_name << std::endl;
+    }
+    catch (const std::exception &e)
+    {
         std::cerr << "Failed to connect to the database: " << e.what() << std::endl;
     }
+    return client;
 }
 
+std::vector<std::pair<double, double>> MongoDB_Manager::getFlightPath(mongocxx::client &client, const std::string &dic, const std::string &db_name, const std::string &collect)
+{
 
-static std::vector<std::pair<double, double>> getFlightPath(mongocxx::client& client, const std::string& dic) {
+    mongocxx::database db = client[db_name];
+    mongocxx::collection dronesCollection = db[collect];
 
-    mongocxx::database db = client["db_name"];  
-    mongocxx::collection dronesCollection = db["drones"];
-
-    auto doc = dronesCollection.find_one(bsoncxx::builder::stream::document{} << "dic" << droneId << bsoncxx::builder::stream::finalize);
-    if (!doc) {
-        std::cerr << "No drone found with dic: " << droneId << std::endl;
-        return "";
+    auto doc = dronesCollection.find_one(make_document(kvp("dic", dic)));
+    if (!doc)
+    {
+        std::cerr << "No drone found with dic: " << dic << std::endl;
+        return {};
     }
 
-    auto view = doc->view();
-    document::element flightElement = view["flight"];
-    
+    // auto view = doc.value()["dic"];
+    auto dicc = doc.value()["dic"].get_string().value;
+    auto flight = doc.value()["flight"].get_array();
+    // auto flightString = flight.value.to_string();
+
     // if (flightElement.type() != type::k_array) {
     //     std::cerr << "Flight data is not in the expected format." << std::endl;
     //     return {};
     // }
-   
-    std::vector<std::pair<double, double>> flightPath;
-    for (auto subArrayElement : flightElement.get_array().value) {
-        auto iter = subArrayElement.get_array().value.begin();
-        double latitude = (*iter++).get_double().value; 
-        double longitude = (*iter).get_double().value;   
+    std::cout << "Flight attribute: " << std::endl;
 
+    std::vector<std::pair<double, double>> flightPath;
+    auto array = flight.value;
+    if (array.length() == 0)
+    {
+        return {};
+    }
+    for (auto subArrayElement : flight.value)
+    {
+        //if the value in the db is integer, then this will throw an exception
+        double latitude = subArrayElement[0].get_value().get_double();
+        double longitude = subArrayElement[1].get_value().get_double();
+        std::cout << latitude << " " << longitude << std::endl;
         flightPath.emplace_back(latitude, longitude);
     }
     return flightPath;
 }
-
 
 // Getters

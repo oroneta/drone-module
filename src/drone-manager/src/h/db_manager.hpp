@@ -19,33 +19,16 @@
 // Before cox
 namespace drone_manager
 {
+    const std::string uri_string = "mongodb://Oroneta_Admin:Oroneta_Password@oroneta.drone-module.drone-mongo:27017";
+    const std::string db_name = "drone-module-db";
     class MongoDB_Manager
     {
     public:
-        MongoDB_Manager(const std::string &u);
-        ~MongoDB_Manager() {}
-        
-        //funtions
-        void connect(const std:: string& dbName);
-        static std::string getFlightPath(mongocxx::client client, const std::string& dic);
-
-        // Getters
-        // mongocxx::client &get_client() const;
-        // mongocxx::uri get_uri();
-        // mongocxx::database &get_database(std::string db_name) const;
-        // mongocxx::collection &get_collection(mongocxx::database &db, std::string coll_name) const;
-        // // other methods
-        // void change_uri(mongocxx::uri &u);
-
-        
+        // funtions
+        static mongocxx::client connect(const std::string &uri);
+        static std::vector<std::pair<double, double>> getFlightPath(mongocxx::client &client, const std::string &dic, const std::string &db_name, const std::string &collect);
 
     private:
-        mongocxx::client client;
-        mongocxx::database db;
-
-        static const std::string uri_string;
-        static const std::string db_name;
-
     };
 }
 

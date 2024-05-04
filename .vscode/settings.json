@@ -70,6 +70,8 @@
         "charconv": "cpp",
         "format": "cpp",
         "future": "cpp",
-        "span": "cpp"
+        "span": "cpp",
+        "forward_list": "cpp",
+        "unordered_set": "cpp"
     }
 }

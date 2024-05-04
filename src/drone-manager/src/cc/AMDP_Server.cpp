@@ -9,6 +9,8 @@
 #include <bsoncxx/builder/basic/document.hpp>
 #include <bsoncxx/builder/basic/kvp.hpp>
 
+#include "db_manager.hpp"
+
 // TODO: Server that processes drone requests and responses
 
 using bsoncxx::builder::basic::kvp;
@@ -183,57 +185,13 @@ int AMDP_Server::amdp_protocol()
 std::vector<mavsdk::Mission::MissionItem> AMDP_Server::prepare_mission(mavsdk::Telemetry::Position& pos) const
 {
     std::vector<mavsdk::Mission::MissionItem> mission_items;
-    // // Ini position point
-    // mission_items.push_back(make_mission_item2(
-    //     pos.latitude_deg,
-    //     pos.longitude_deg,
-    //     2.0f,
-    //     15.0f,
-    //     true,
-    //     0.0f,
-    //     0.0f,
-    //     mavsdk::Mission::MissionItem::CameraAction::None));
-
-    // // Get the MongoDB client
-    // mongocxx::client* client = mongo_client;
-
-    // // Access the database and perform a query to retrieve GPS data
-    // mongocxx::database db = (*client)["drone-module-db"];
-    // mongocxx::collection collection = db["drones"];
     
-    // // Filter dic
-    // auto filter = bsoncxx::builder::stream::document{} << "dic" << "0" << bsoncxx::builder::stream::finalize;
-
-    // // Perform a query to retrieve GPS data
-    // mongocxx::cursor cursor = collection.find(filter.view());
- 
-    // for (auto&& doc : cursor)
-    // {
-    //     // Access necessary fields in the document to obtain GPS coordinates
-    //     auto gps_data = doc["metadata"]["gps"];
-    //     double latitude = gps_data[0].get_double();
-    //     double longitude = gps_data[1].get_double();
-
-    //     // Add the MissionItem to the mission_items vector
-    //     mission_items.push_back(make_mission_item2(
-    //         latitude,
-    //         longitude,
-    //         2.0f,
-    //         15.0f,
-    //         true,
-    //         0.0f,
-    //         0.0f,
-    //         mavsdk::Mission::MissionItem::CameraAction::None));
-    // }
-    //  mission_items.push_back(make_mission_item2(
-    //     39.4808152,
-    //     -0.3401091,
-    //     2.0f,
-    //     5.0f,
-    //     true,
-    //     0.0f,
-    //     0.0f,
-    //     Mission::MissionItem::CameraAction::None));
+    auto mission_points = drone_manager::MongoDB_Manager::getFlightPath(*mongo_client, "0", drone_manager::db_name, "drones");
+    while(mission_points.size() == 0) {
+        std::cout << "No mission for the moment" << std::endl;
+        sleep_for(seconds(2));
+        mission_points = drone_manager::MongoDB_Manager::getFlightPath(*mongo_client, "0", drone_manager::db_name, "drones");
+    }
 
     mission_items.push_back(make_mission_item2(
         39.4400359,

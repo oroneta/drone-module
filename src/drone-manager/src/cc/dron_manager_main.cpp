@@ -40,8 +40,9 @@ using std::string;
 using std::vector;
 
 using namespace mavsdk;
+using namespace drone_manager;
 
-//const char *server_ip = "mongodb://oroneta.drone-module.drone-mongo:27017/drone-module-db?authSource=admin"; // TODO: Harcoded
+const char *server_ip = "mongodb://Oroneta_Admin:Oroneta_Password@oroneta.drone-module.drone-mongo:27017"; // TODO: Harcoded
 
 int main(int argc, char **argv)
 {
@@ -61,16 +62,11 @@ int main(int argc, char **argv)
     // {
     //     cout << e.what() << endl;
     // }
-    drone_manager::MongoDB_Manager dbManager;
-    try {
-        dbManager.connect(); 
-    } catch (const exception &e) {
-        cerr << "Error al conectar a la base de datos: " << e.what() << endl; 
-    }
+    auto client = MongoDB_Manager::connect(uri_string);
 
     Mavsdk *mavsdk = new Mavsdk{Mavsdk::Configuration{Mavsdk::ComponentType::GroundStation}};
 
-    AMDP_Server server(-1, client, mavsdk);
+    AMDP_Server server(-1, &client, mavsdk);
 
     server.start();
 
