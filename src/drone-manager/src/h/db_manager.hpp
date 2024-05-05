@@ -27,7 +27,7 @@ namespace drone_manager
         // funtions
         static std::shared_ptr<mongocxx::client> connect(const std::string &uri);
         static std::vector<std::pair<double, double>> getFlightPath(mongocxx::client &client, const std::string &dic, const std::string &db_name, const std::string &collect);
-
+        static void updateDronePosition(mongocxx::client &client,const std::string &dic, const std::string &db_name, const std::string &collect, double latitude, double longitude);
     private:
     };
 }
