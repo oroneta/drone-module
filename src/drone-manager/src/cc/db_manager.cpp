@@ -63,7 +63,7 @@ std::vector<std::pair<double, double>> MongoDB_Manager::getFlightPath(mongocxx::
     return flightPath;
 }
 
-void MongoDB_Manager::updateDronePosition(mongocxx::client &client, const std::string &db_name, const std::string &collect, const std::string &dic, double latitude, double longitude) {
+void MongoDB_Manager::updateDronePosition(mongocxx::client &client,const std::string &dic, const std::string &db_name, const std::string &collect, double latitude, double longitude) {
     mongocxx::database db = client[db_name];
     mongocxx::collection dronesCollection = db[collect];
 
