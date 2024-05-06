@@ -44,12 +44,9 @@ using namespace drone_manager;
 
 const char *server_ip = "mongodb://Oroneta_Admin:Oroneta_Password@oroneta.drone-module.drone-mongo:27017"; // TODO: Harcoded
 
-int main(int argc, char **argv)
+int manager()
 {
 
-    mongocxx::instance instance{}; // Only once, don't invoke again. For more information, see mongocxx driver tutorial page
-    // Neither client and pool are safely copied after fork, so we need to create new clients and pool after fork. More information mongocxx documentation
-    // In addition, all the mongocxx objects are not safely copied after fork
     auto client = MongoDB_Manager::connect(uri_string);
 
     Mavsdk *mavsdk = new Mavsdk{Mavsdk::Configuration{Mavsdk::ComponentType::GroundStation}};
@@ -67,5 +64,21 @@ int main(int argc, char **argv)
     {
         start_res = server.start();
     } while (start_res != 0);
+
     return 0;
+}
+
+int main(int argc, char **argv)
+{
+    mongocxx::instance instance{};
+    // Only once, don't invoke again. For more information, see mongocxx driver tutorial page
+    // Neither client and pool are safely copied after fork, so we need to create new clients and pool after fork. More information mongocxx documentation
+    // In addition, all the mongocxx objects are not safely copied after fork
+    int res = 0;
+    while (true && res == 0)
+    {
+        res = manager();
+    }
+
+    return res;
 }

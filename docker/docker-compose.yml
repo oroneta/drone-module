@@ -30,7 +30,7 @@ services:
             - "14540:14540/udp"
         depends_on:
             - oroneta.drone-module.drone-mongo
-            # - oroneta.drone-module.drone-api
+            - oroneta.drone-module.drone-api
         volumes:
             - oroneta.drone-module.drone-manager:/opt/drone-manager/var
         #network_mode: "host"

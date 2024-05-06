@@ -73,12 +73,22 @@ int AMDP_Server::start()
 
     mavsdk::Telemetry::Position external_position;
 
-    telemetry.subscribe_position([&external_position](Telemetry::Position position)
+    telemetry.subscribe_position([&external_position, this](Telemetry::Position position)
                                  {
                                      std::cout << "Altitude: " << position.relative_altitude_m << " m\n";
                                      // std::cout << "Absolute Altitude: " << position.absolute_altitude_m << " m\n";
                                      std::cout << "Latitude: " << position.latitude_deg << " deg\n";
-                                     std::cout << "Longitude: " << position.longitude_deg << " deg\n"; });
+                                     std::cout << "Longitude: " << position.longitude_deg << " deg\n"; 
+                                     drone_manager::MongoDB_Manager::updateDronePosition(*(this->get_client()), "0",
+                                     drone_manager::db_name, "drones", position.latitude_deg, position.longitude_deg
+                                     ); }
+
+    );
+
+    telemetry.subscribe_battery([this](Telemetry::Battery battery) {
+                                std::cout << "Battery: " << battery.current_battery_a << "\n";
+                                std::cout << "Battery: " << battery.remaining_percent << "\n";
+    });
 
     telemetry.subscribe_heading([](Telemetry::Heading heading)
                                 { std::cout << "Heading: " << heading.heading_deg << " deg\n"; });
@@ -306,7 +316,12 @@ bool AMDP_Server::check_drone_identification(mavsdk::Info::Identification id) co
     return true;
 }
 
-void AMDP_Server::close_port_connections() {
+void AMDP_Server::close_port_connections()
+{
     mavsdk->remove_connection(mavsdk::Handle());
 }
 
+std::shared_ptr<mongocxx::client> AMDP_Server::get_client() const
+{
+    return mongo_client;
+}

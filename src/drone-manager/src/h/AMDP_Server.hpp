@@ -109,6 +109,8 @@ public:
 
     void close_port_connections();
 
+    std::shared_ptr<mongocxx::client> get_client() const;
+
     /*void check_new_connection();*/
 };
 
