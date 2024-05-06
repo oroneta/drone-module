@@ -85,10 +85,11 @@ int AMDP_Server::start()
 
     );
 
-    telemetry.subscribe_battery([this](Telemetry::Battery battery) {
+    telemetry.subscribe_battery([this](Telemetry::Battery battery)
+                                {
                                 std::cout << "Battery: " << battery.current_battery_a << "\n";
                                 std::cout << "Battery: " << battery.remaining_percent << "\n";
-    });
+                                drone_manager::MongoDB_Manager::updateDroneBattery(*(this->get_client()), drone_manager::db_name, "drones", "0", battery.remaining_percent); });
 
     telemetry.subscribe_heading([](Telemetry::Heading heading)
                                 { std::cout << "Heading: " << heading.heading_deg << " deg\n"; });
