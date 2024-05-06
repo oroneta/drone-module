@@ -180,7 +180,8 @@ router.post('/routes/:dic', async (req, res) => {
                 if (jsonStr.status == 1) {
                     // Insrt drone with all data, and if already exist update the data
                     let drone = await _DroneController.findDroneExist(req.params.dic, auth);
-
+                    
+                    route = JSON.stringify(route);
                     if (drone.length == 0) {
                         await _DroneController.insertOneWithFlight(req.params.dic, auth, route, 1, jsonStr.dangerous_level);
                     }
