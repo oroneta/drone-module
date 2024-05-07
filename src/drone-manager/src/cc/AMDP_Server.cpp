@@ -5,6 +5,7 @@
 #include <memory>
 #include <thread>
 #include <mutex>
+#include <cmath>
 
 #include <bsoncxx/builder/basic/document.hpp>
 #include <bsoncxx/builder/basic/kvp.hpp>
@@ -93,6 +94,14 @@ int AMDP_Server::start()
 
     telemetry.subscribe_heading([](Telemetry::Heading heading)
                                 { std::cout << "Heading: " << heading.heading_deg << " deg\n"; });
+
+    telemetry.subscribe_velocity_ned([this](Telemetry::VelocityNed velocity)
+                                     {
+                                std::cout << "Velocity_down: " << velocity.down_m_s << " m/s\n";
+                                std::cout << "Velocity_north: " << velocity.north_m_s << " m/s\n";
+                                std::cout << "Velocity_east: " << velocity.east_m_s << " m/s\n";
+                                double speed_km_s = (std::sqrt(velocity.north_m_s*velocity.north_m_s + velocity.east_m_s*velocity.east_m_s))*3600/1000;
+                                drone_manager::MongoDB_Manager::updateDroneSpeed(*(this->get_client()), drone_manager::db_name, "drones", "0", speed_km_s); });
 
     while (!telemetry.health_all_ok())
     {
