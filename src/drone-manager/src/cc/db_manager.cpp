@@ -103,5 +103,23 @@ void MongoDB_Manager::updateDroneBattery(mongocxx::client &client, const std::st
     }
 }
 
+void MongoDB_Manager::updateDroneSpeed(mongocxx::client &client, const std::string &db_name, const std::string &collect, const std::string &dic, double speed) {
+    mongocxx::database db = client[db_name];
+    mongocxx::collection dronesCollection = db[collect];
+
+    auto filter = make_document(kvp("dic", dic));
+    auto update = make_document(kvp("$set", make_document(kvp("metadata.speed", speed))));
+
+    try {
+        auto result = dronesCollection.update_one(filter.view(), update.view());
+        if (result && result->modified_count() > 0) {
+            std::cout << "Successfully updated speed" << dic << std::endl;
+        } else {
+            std::cout << "No speed updated" << dic << std::endl;
+        }
+    } catch (const std::exception &e) {
+        std::cerr << "Error updating speed: " << e.what() << std::endl;
+    }
+}
 
 // Getters
