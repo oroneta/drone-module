@@ -2,7 +2,7 @@ import sys, time, requests
 
 
 if __name__ == "__main__":
-    url = 'http://127.0.0.1:60001/alarm/0'
+    url = 'http://localhost:60001/alarm/0'
     headers = {
         'Authorization': 'Bearer 0'
     }
