@@ -268,6 +268,50 @@ router.get('/alarm/:dic', _Middleware.checkAuth, async (req, res) => {
 });
 
 /*
+    @example: /alarm/<dic>
+    @obligated: Add authorization header
+
+    @brief: disable alarm with DELETE method
+*/
+router.delete('/alarm/:dic', _Middleware.checkAuth, async (req, res) => {
+    if (req.headers.authorization.startsWith('Bearer ')) {
+        let drone;
+        try {
+            // Remove Bearer Clause
+            let auth = req.headers.authorization.split(' ')[1];
+            let droneList = req.params.dic.split(';');
+
+            // Get the status of every drone
+            for (let i = 0; i < droneList.length; i++) {
+                drone = await _DroneController.findDroneExist(droneList[i], auth);
+
+                if (drone.length == 0) {
+                    // If not exist, continue to the next drone
+                    continue;
+                }
+
+                if (drone[0].alarm_status) {
+                    await _DroneController.updateAlarmStatus(droneList[i], auth, 0);
+                }
+            }
+
+            // If any drone exist, return 404
+            if (Object.keys(drone).length == 0) {
+                return _Common.r404(res);
+            }
+        } catch (error) {
+            logger.crit(error);
+            return _Common.r500(res);
+        }
+
+        return _Common.rJson(res, {});
+    }
+
+    return _Common.r400(res);
+});
+
+
+/*
     @example: /alarm/image/<image>
 */
 router.get('/alarm/image/:image', async (req, res) => {
