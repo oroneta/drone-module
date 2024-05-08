@@ -48,6 +48,15 @@ export default class _DroneController {
         return true;
     }
 
+    static async updateAlarmStatus (dic, auth_code, alarm_status) {
+        await DroneModel.updateOne({
+            dic,
+            auth_code
+        }, {
+            alarm_status
+        });
+        return true;
+    }
 
 
     

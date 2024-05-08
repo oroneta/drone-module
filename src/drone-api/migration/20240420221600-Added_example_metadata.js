@@ -16,7 +16,7 @@ export default async (db) => {
                 last_update: new Date().getTime()
             },
             status: true,
-            flight: Buffer.from([]),
+            flight: [[39.455109, -0.318429], [39.446593, -0.310454, 39.443292, -0.321233], [39.447712, -0.326340], [39.455544, -0.327053]],
             flight_priority: 0,
             flight_altitude: 0,
             alarm_status: false,
