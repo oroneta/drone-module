@@ -180,10 +180,10 @@ router.post('/routes/:dic', async (req, res) => {
                 let drone = await _DroneController.findDroneExist(req.params.dic, auth);
                 
                 if (drone.length == 0) {
-                    await _DroneController.insertOneWithFlight(req.params.dic, auth, route, 1, 0);
+                    await _DroneController.insertOneWithFlight(req.params.dic, auth, route["coord"], 1, 0);
                 }
                 else {
-                    await _DroneController.updateOneWithFlight(req.params.dic, auth, route, 1, 0);
+                    await _DroneController.updateOneWithFlight(req.params.dic, auth, route["coord"], 1, 0);
                 }
 
                 return _Common.rJson(res, {});
