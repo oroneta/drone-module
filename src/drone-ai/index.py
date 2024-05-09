@@ -10,7 +10,7 @@ from ultralytics import YOLO
 
 from lib.ddbb import DDBB
 from lib.logRotate import logRotate
-from lib.predict import predictAI
+from lib.predict import predictAI, initializeAI
 
 log_name = os.path.abspath(os.path.join(os.path.dirname(__file__), 'var', 'logs', 'server.log'))
 # Rotate logs
@@ -93,6 +93,8 @@ def postCamera(dic: str) -> None:
 if __name__ == '__main__':
     # Get port from environment variable: AI_PORT
     port = os.getenv('AI_PORT', 60003)
+
+    iniAI = initializeAI()
 
     if (os.getenv('SERVER_ENV', 'dev') == 'dev'):
         # Run the app with Flask

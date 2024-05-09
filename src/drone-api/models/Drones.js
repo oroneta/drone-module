@@ -22,9 +22,9 @@ const droneSchema = new mongoose.Schema({
         default: false
     },
     flight: {
-        type: Buffer,
+        type: Object,
         required: true,
-        default: 0
+        default: []
     },
     flight_priority: {
         type: Number,

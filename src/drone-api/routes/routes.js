@@ -180,7 +180,8 @@ router.post('/routes/:dic', async (req, res) => {
                 if (jsonStr.status == 1) {
                     // Insrt drone with all data, and if already exist update the data
                     let drone = await _DroneController.findDroneExist(req.params.dic, auth);
-
+                    
+                    route = JSON.stringify(route);
                     if (drone.length == 0) {
                         await _DroneController.insertOneWithFlight(req.params.dic, auth, route, 1, jsonStr.dangerous_level);
                     }
@@ -230,22 +231,25 @@ router.get('/alarm/:dic', _Middleware.checkAuth, async (req, res) => {
             // Get the status of every drone
             for (let i = 0; i < droneList.length; i++) {
                 drone = await _DroneController.findDroneExist(droneList[i], authList[i]);
-                alarm = await _ImageController.findImageData(drone[0].alarm_data);
 
                 if (drone.length == 0) {
                     // If not exist, continue to the next drone
                     continue;
                 }
 
-                result[droneList[i]] = (drone[0].alarm_status 
-                ?
-                {
-                    status: 1,
-                    expire_date: alarm[0].expire_date,
-                    image_path: `/alarm/image/${drone[0].alarm_data}`
-                } : {
-                    status: 0,
-                });
+                if (drone[0].alarm_status) {
+                    alarm = await _ImageController.findImageData(drone[0].alarm_data);
+                    result[droneList[i]] = {
+                        status: 1,
+                        expire_date: alarm[0].expire_date,
+                        image_path: `/alarm/image/${drone[0].alarm_data}`
+                    };
+                }
+                else {
+                    result[droneList[i]] = {
+                        status: 0
+                    };
+                }
             }
 
             // If any drone exist, return 404
@@ -262,6 +266,50 @@ router.get('/alarm/:dic', _Middleware.checkAuth, async (req, res) => {
 
     return _Common.r400(res);
 });
+
+/*
+    @example: /alarm/<dic>
+    @obligated: Add authorization header
+
+    @brief: disable alarm with DELETE method
+*/
+router.delete('/alarm/:dic', _Middleware.checkAuth, async (req, res) => {
+    if (req.headers.authorization.startsWith('Bearer ')) {
+        let drone;
+        try {
+            // Remove Bearer Clause
+            let auth = req.headers.authorization.split(' ')[1];
+            let droneList = req.params.dic.split(';');
+
+            // Get the status of every drone
+            for (let i = 0; i < droneList.length; i++) {
+                drone = await _DroneController.findDroneExist(droneList[i], auth);
+
+                if (drone.length == 0) {
+                    // If not exist, continue to the next drone
+                    continue;
+                }
+
+                if (drone[0].alarm_status) {
+                    await _DroneController.updateAlarmStatus(droneList[i], auth, 0);
+                }
+            }
+
+            // If any drone exist, return 404
+            if (Object.keys(drone).length == 0) {
+                return _Common.r404(res);
+            }
+        } catch (error) {
+            logger.crit(error);
+            return _Common.r500(res);
+        }
+
+        return _Common.rJson(res, {});
+    }
+
+    return _Common.r400(res);
+});
+
 
 /*
     @example: /alarm/image/<image>
