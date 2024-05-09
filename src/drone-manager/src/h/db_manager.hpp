@@ -24,11 +24,55 @@ namespace drone_manager
     class MongoDB_Manager
     {
     public:
-        // funtions
+        /**
+         * @brief Establishes a connection to the MongoDB server using the provided URI.
+         * 
+         * @param uri MongoDB connection URI string.
+         * @return std::shared_ptr<mongocxx::client> Pointer to the MongoDB client.
+         */
         static std::shared_ptr<mongocxx::client> connect(const std::string &uri);
+
+        /**
+         * @brief Retrieves the flight path coordinates from the specified MongoDB collection.
+         * 
+         * @param client MongoDB client connection.
+         * @param db_name Name of the MongoDB database.
+         * @param collect Name of the MongoDB collection containing flight data.
+         * @return std::vector<std::pair<double, double>> List of latitude and longitude coordinates.
+         */
         static std::vector<std::pair<double, double>> getFlightPath(mongocxx::client &client, const std::string &dic, const std::string &db_name, const std::string &collect);
+
+        /**
+         * @brief Updates the drone's position in the MongoDB collection.
+         * 
+         * @param client MongoDB client connection.
+         * @param db_name Name of the MongoDB database.
+         * @param collect Name of the MongoDB collection for drone data.
+         * @param latitude Latitude coordinate of the drone.
+         * @param longitude Longitude coordinate of the drone.
+         */
         static void updateDronePosition(mongocxx::client &client,const std::string &dic, const std::string &db_name, const std::string &collect, double latitude, double longitude);
+
+        /**
+         * @brief Updates the drone's battery level in the MongoDB collection.
+         * 
+         * @param client MongoDB client connection.
+         * @param db_name Name of the MongoDB database.
+         * @param collect Name of the MongoDB collection for drone data.
+         * @param dic Drone identifier code.
+         * @param battery Current battery level of the drone.
+         */
         static void updateDroneBattery(mongocxx::client &client, const std::string &db_name, const std::string &collect, const std::string &dic, double battery);
+
+        /**
+         * @brief Updates the drone's speed in the MongoDB collection.
+         * 
+         * @param client MongoDB client connection.
+         * @param db_name Name of the MongoDB database.
+         * @param collect Name of the MongoDB collection for drone data.
+         * @param dic Drone identifier code.
+         * @param speed Current speed of the drone.
+         */
         static void updateDroneSpeed(mongocxx::client &client, const std::string &db_name, const std::string &collect, const std::string &dic, double speed);
     private:
     };
