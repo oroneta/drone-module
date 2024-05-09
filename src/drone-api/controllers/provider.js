@@ -1,3 +1,5 @@
+import logger from './logger.js';
+
 // Import all migrations
 export default class _ProviderComm {
     #provider_host;
@@ -32,11 +34,12 @@ export default class _ProviderComm {
     */
     async getProvider(dic, code, array) {
         try {
+            logger.info(`${this.#provider_protocol}://${this.#provider_host}:${this.#provider_port}/route/${dic}`);
             const response = await fetch(`${this.#provider_protocol}://${this.#provider_host}:${this.#provider_port}/route/${dic}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${code}`
+                    'Authorization': `${code}`
                 },
                 body: JSON.stringify(array)
             });
