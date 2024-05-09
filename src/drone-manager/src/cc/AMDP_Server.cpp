@@ -65,6 +65,7 @@ int AMDP_Server::start()
     auto mission = Mission{system.value()};
     auto telemetry = Telemetry{system.value()};
 
+    const char* dic = "ESP00001-123-0033";
     const auto set_rate_result = telemetry.set_rate_position(1.0);
     if (set_rate_result != Telemetry::Result::Success)
     {
@@ -74,34 +75,34 @@ int AMDP_Server::start()
 
     mavsdk::Telemetry::Position external_position;
 
-    telemetry.subscribe_position([&external_position, this](Telemetry::Position position)
+    telemetry.subscribe_position([&external_position, this, dic](Telemetry::Position position)
                                  {
                                      std::cout << "Altitude: " << position.relative_altitude_m << " m\n";
                                      // std::cout << "Absolute Altitude: " << position.absolute_altitude_m << " m\n";
                                      std::cout << "Latitude: " << position.latitude_deg << " deg\n";
                                      std::cout << "Longitude: " << position.longitude_deg << " deg\n"; 
-                                     drone_manager::MongoDB_Manager::updateDronePosition(*(this->get_client()), "0",
+                                     drone_manager::MongoDB_Manager::updateDronePosition(*(this->get_client()), dic,
                                      drone_manager::db_name, "drones", position.latitude_deg, position.longitude_deg
                                      ); }
 
     );
 
-    telemetry.subscribe_battery([this](Telemetry::Battery battery)
+    telemetry.subscribe_battery([this, dic](Telemetry::Battery battery)
                                 {
                                 std::cout << "Battery: " << battery.current_battery_a << "\n";
                                 std::cout << "Battery: " << battery.remaining_percent << "\n";
-                                drone_manager::MongoDB_Manager::updateDroneBattery(*(this->get_client()), drone_manager::db_name, "drones", "0", battery.remaining_percent); });
+                                drone_manager::MongoDB_Manager::updateDroneBattery(*(this->get_client()), drone_manager::db_name, "drones", dic, battery.remaining_percent); });
 
     telemetry.subscribe_heading([](Telemetry::Heading heading)
                                 { std::cout << "Heading: " << heading.heading_deg << " deg\n"; });
 
-    telemetry.subscribe_velocity_ned([this](Telemetry::VelocityNed velocity)
+    telemetry.subscribe_velocity_ned([this, dic](Telemetry::VelocityNed velocity)
                                      {
                                 std::cout << "Velocity_down: " << velocity.down_m_s << " m/s\n";
                                 std::cout << "Velocity_north: " << velocity.north_m_s << " m/s\n";
                                 std::cout << "Velocity_east: " << velocity.east_m_s << " m/s\n";
                                 double speed_km_s = (std::sqrt(velocity.north_m_s*velocity.north_m_s + velocity.east_m_s*velocity.east_m_s))*3600/1000;
-                                drone_manager::MongoDB_Manager::updateDroneSpeed(*(this->get_client()), drone_manager::db_name, "drones", "0", speed_km_s); });
+                                drone_manager::MongoDB_Manager::updateDroneSpeed(*(this->get_client()), drone_manager::db_name, "drones", dic, speed_km_s); });
 
     while (!telemetry.health_all_ok())
     {
@@ -202,14 +203,14 @@ int AMDP_Server::amdp_protocol()
 std::vector<mavsdk::Mission::MissionItem> AMDP_Server::prepare_mission(mavsdk::Telemetry::Position &pos) const
 {
     std::vector<mavsdk::Mission::MissionItem> mission_items;
-
-    auto mission_points = drone_manager::MongoDB_Manager::getFlightPath(*mongo_client, "0", drone_manager::db_name, "drones");
+    const char* dic = "ESP00001-123-0033";
+    auto mission_points = drone_manager::MongoDB_Manager::getFlightPath(*mongo_client, dic, drone_manager::db_name, "drones");
     unsigned int i = 0;
     while (mission_points.size() == 0 && i != 3)
     {
         std::cout << "No mission for the moment" << std::endl;
         sleep_for(seconds(2));
-        mission_points = drone_manager::MongoDB_Manager::getFlightPath(*mongo_client, "0", drone_manager::db_name, "drones");
+        mission_points = drone_manager::MongoDB_Manager::getFlightPath(*mongo_client, dic, drone_manager::db_name, "drones");
         i++;
     }
 

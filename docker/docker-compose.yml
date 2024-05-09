@@ -8,9 +8,9 @@ services:
         container_name: oroneta.drone-module.drone-api
         env_file:
             - .env
-        # restart: unless-stopped
-        # ports:
-        #     - "60001:60001"
+        restart: unless-stopped
+        ports:
+            - "60001:60001"
         depends_on:
             - oroneta.drone-module.drone-mongo
         volumes:
@@ -24,7 +24,7 @@ services:
         container_name: oroneta.drone-module.drone-manager
         env_file:
             - .env
-        # restart: unless-stopped
+        restart: unless-stopped
         ports:
             - "60002:60002/udp"
             - "14540:14540/udp"
@@ -35,20 +35,20 @@ services:
             - oroneta.drone-module.drone-manager:/opt/drone-manager/var
         #network_mode: "host"
 
-    # oroneta.drone-module.drone-ai:
-    #     build:
-    #         context: ..
-    #         dockerfile: ./docker/drone-ai/Dockerfile
-    #     container_name: oroneta.drone-module.drone-ai
-    #     # restart: unless-stopped
-    #     env_file:
-    #         - .env
-    #     # ports:
-    #     #     - "60003:60003"
-    #     volumes:
-    #         - oroneta.drone-module.drone-ai:/opt/drone-ai/var
-    #     depends_on:
-    #         - oroneta.drone-module.drone-mongo
+    oroneta.drone-module.drone-ai:
+        build:
+            context: ..
+            dockerfile: ./docker/drone-ai/Dockerfile
+        container_name: oroneta.drone-module.drone-ai
+        restart: unless-stopped
+        env_file:
+            - .env
+        ports:
+            - "60003:60003"
+        volumes:
+            - oroneta.drone-module.drone-ai:/opt/drone-ai/var
+        depends_on:
+            - oroneta.drone-module.drone-mongo
     # #     network_mode: "host"
 
     oroneta.drone-module.drone-mongo:
