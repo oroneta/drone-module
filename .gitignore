@@ -1,2 +1,17 @@
 node_modules
 .DS_Store
+log
+
+# Ignore all files in the build directory
+/build/*
+*.tar.gz
+*.zip
+*.gz
+*.olog
+*.o
+
+tmp
+__pycache__
+
+bin/
+build/

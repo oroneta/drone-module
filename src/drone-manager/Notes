@@ -1,0 +1,15 @@
+Problems during development
+
+How to measure time if the socket is no blocking after drone does not 
+communicate after a period of time?
+- At the start to the connection we start the timer, every time we receive a message we reset it. If after x seconds we dont receive any messages we close the connection
+
+
+Preguntas
+¿Qué medidas o parametros tiene puede enviar el drone, a parte de altura, velocidad, etc?
+
+Entrevista a Mariano:
+
+Estamos entrando en muy bajo nivel. 
+Hay muchos tipos de drones, cada marca tiene su propio API. Que permite ya el control de los drones. 
+Hay proyectos opensource que nos permiten 
