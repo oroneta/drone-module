@@ -1,5 +1,6 @@
 import DroneModel from '../models/Drones.js';
 import _Common from './common.js';
+import logger from './logger.js';
 
 export default class _DroneController {
     static async findAll() {
@@ -24,6 +25,7 @@ export default class _DroneController {
     }
 
     static async insertOneWithFlight (dic, auth_code, route, priority, altitude) {
+        logger.info(`Inserting drone with dic: ${dic} and auth_code: ${auth_code}`);
         const newDrone = new DroneModel({
             dic,
             auth_code,
@@ -37,6 +39,7 @@ export default class _DroneController {
     }
 
     static async updateOneWithFlight (dic, auth_code, route, priority, altitude) {
+        logger.info(`Inserting drone with dic: ${dic} and auth_code: ${auth_code}`);
         await DroneModel.updateOne({
             dic,
             auth_code
