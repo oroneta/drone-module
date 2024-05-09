@@ -175,21 +175,18 @@ router.post('/routes/:dic', async (req, res) => {
             let response = await provider.getProvider(req.params.dic, auth, route);
 
             if (response.status == 200) {
-                let jsonStr = response.json()
-                // Get the status of the route
-                if (jsonStr.status == 1) {
-                    // Insrt drone with all data, and if already exist update the data
-                    let drone = await _DroneController.findDroneExist(req.params.dic, auth);
-                    
-                    if (drone.length == 0) {
-                        await _DroneController.insertOneWithFlight(req.params.dic, auth, route, 1, 0);
-                    }
-                    else {
-                        await _DroneController.updateOneWithFlight(req.params.dic, auth, route, 1, 0);
-                    }
+                
+                // Insrt drone with all data, and if already exist update the data
+                let drone = await _DroneController.findDroneExist(req.params.dic, auth);
+                
+                if (drone.length == 0) {
+                    await _DroneController.insertOneWithFlight(req.params.dic, auth, route, 1, 0);
+                }
+                else {
+                    await _DroneController.updateOneWithFlight(req.params.dic, auth, route, 1, 0);
                 }
 
-                return _Common.rJson(res, jsonStr);
+                return _Common.rJson(res, {});
             }
 
             if (response.status == 404) {
