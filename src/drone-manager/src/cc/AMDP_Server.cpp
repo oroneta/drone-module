@@ -165,8 +165,6 @@ int AMDP_Server::start()
         sleep_for(seconds(1));
     }
 
-    // sleep_for(seconds(20));
-
     while (!mission.is_mission_finished().second)
     {
         sleep_for(seconds(1));
@@ -220,65 +218,9 @@ std::vector<mavsdk::Mission::MissionItem> AMDP_Server::prepare_mission(mavsdk::T
         return mission_items;
     }
 
-    // mission_items.push_back(make_mission_item2(
-    //     39.4400359,
-    //     -0.3222084,
-    //     2.0f,
-    //     15.0f,
-    //     true,
-    //     0.0f,
-    //     0.0f,
-    //     Mission::MissionItem::CameraAction::None));
-
-    // mission_items.push_back(make_mission_item2(
-    //     39.4336000,
-    //     -0.3123000,
-    //     2.0f,
-    //     15.0f,
-    //     true,
-    //     0.0f,
-    //     0.0f,
-    //     Mission::MissionItem::CameraAction::TakePhoto));
-
-    // mission_items.push_back(make_mission_item2(
-    //     39.4299000,
-    //     -0.3152000,
-    //     2.0f,
-    //     15.0f,
-    //     true,
-    //     0.0f,
-    //     0.0f,
-    //     Mission::MissionItem::CameraAction::StartVideo));
-
-    // mission_items.push_back(make_mission_item2(
-    //     39.4359000,
-    //     -0.3301000,
-    //     2.0f,
-    //     15.0f,
-    //     true,
-    //     0.0f,
-    //     0.0f,
-    //     Mission::MissionItem::CameraAction::StopVideo));
-
-    // mission_items.push_back(make_mission_item2(
-    //     39.4400359,
-    //     -0.3222084,
-    //     2.0f,
-    //     15.0f,
-    //     true,
-    //     0.0f,
-    //     0.0f,
-    //     Mission::MissionItem::CameraAction::StartPhotoInterval));
     for (auto pos : mission_points)
     {
         mavsdk::Mission::MissionItem item = make_mission_item2(pos.first, pos.second, 2.0f, 15.0f, true, 0.0f, 0.0f, Mission::MissionItem::CameraAction::TakePhoto);
-        // item.latitude_deg = pos.first;
-        // item.longitude_deg = pos.second;
-        // item.relative_altitude_m = 2.0f;
-        // item.speed_m_s = 15.0f;
-        // item.is_fly_through = true;
-        // item.gimbal_pitch_deg = 0.0f;
-        // item.gimbal_yaw_deg = 0.0f;
         mission_items.push_back(item);
     }
 
@@ -307,18 +249,19 @@ mavsdk::Mission::MissionItem AMDP_Server::make_mission_item2(
     return new_item;
 }
 
-mavsdk::Mission::MissionPlan AMDP_Server::takeOff_land_mission(mavsdk::Telemetry::Position pos) const
-{
-    Mission::MissionPlan plan;
+//DEPRECATED
+// mavsdk::Mission::MissionPlan AMDP_Server::takeOff_land_mission(mavsdk::Telemetry::Position pos) const
+// {
+//     Mission::MissionPlan plan;
 
-    Mission::MissionItem item1;
-    item1.relative_altitude_m = 2.0f;
-    item1.latitude_deg = pos.latitude_deg + 3.0;
-    item1.longitude_deg = pos.longitude_deg + 3.0;
-    plan.mission_items.push_back(item1);
+//     Mission::MissionItem item1;
+//     item1.relative_altitude_m = 2.0f;
+//     item1.latitude_deg = pos.latitude_deg + 3.0;
+//     item1.longitude_deg = pos.longitude_deg + 3.0;
+//     plan.mission_items.push_back(item1);
 
-    return plan;
-}
+//     return plan;
+// }
 
 bool AMDP_Server::check_drone_identification(mavsdk::Info::Identification id) const
 {
@@ -326,10 +269,10 @@ bool AMDP_Server::check_drone_identification(mavsdk::Info::Identification id) co
     return true;
 }
 
-void AMDP_Server::close_port_connections()
-{
-    mavsdk->remove_connection(mavsdk::Handle());
-}
+// void AMDP_Server::close_port_connections()
+// {
+//     mavsdk->remove_connection(mavsdk::Handle());
+// }
 
 std::shared_ptr<mongocxx::client> AMDP_Server::get_client() const
 {
