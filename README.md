@@ -142,9 +142,20 @@ The AI include their own set of API endpoints to manage the AI. The AI is respon
 
 Video of the AI in action:
 
-![AI](./util/fireDetectionAI/video/FireForestProcessed.mp4)
+![AI](./doc/img/fire/FireForestProcessed.mp4)
 
-![AI2](./util/fireDetectionAI/video/FireForestProcessed2.mp4)
+![AI2](./doc/img/fire/FireForestProcessed2.mp4)
+
+
+Images of the AI in action:
+
+![AI3](./doc/img/fire/t001.jpg)
+![AI4](./doc/img/fire/t002.jpg)
+![AI5](./doc/img/fire/t003.jpg)
+![AI6](./doc/img/fire/t004.jpg)
+![AI7](./doc/img/fire/t005.jpg)
+![AI8](./doc/img/fire/t006.jpg)
+![AI9](./doc/img/fire/t007.jpg)
 
 
 # Testing
