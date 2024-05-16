@@ -149,13 +149,10 @@ Video of the AI in action:
 
 Images of the AI in action:
 
+![AI1](./doc/img/fire/t000.jpg)
 ![AI3](./doc/img/fire/t001.jpg)
-![AI4](./doc/img/fire/t002.jpg)
-![AI5](./doc/img/fire/t003.jpg)
-![AI6](./doc/img/fire/t004.jpg)
 ![AI7](./doc/img/fire/t005.jpg)
 ![AI8](./doc/img/fire/t006.jpg)
-![AI9](./doc/img/fire/t007.jpg)
 
 
 # Testing
